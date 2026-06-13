@@ -1,0 +1,90 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:ui_avalonia.ViewModels"
+             xmlns:ic="using:FluentIcons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="550"
+             x:Class="ui_avalonia.Views.DnsManagerView"
+             x:DataType="vm:DnsManagerViewModel">
+
+  <Grid RowDefinitions="Auto, Auto, *, Auto" Margin="24">
+    <!-- Tiêu đề -->
+    <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,15">
+      <ic:SymbolIcon Symbol="Shield" FontSize="24" Foreground="{DynamicResource SemiColorPrimary}" VerticalAlignment="Center"/>
+      <TextBlock Text="{Binding Local[menu_dns]}" Theme="{StaticResource TitleTextBlock}" FontWeight="Bold" FontSize="24" VerticalAlignment="Center"/>
+    </StackPanel>
+
+    <!-- Thanh cấu hình chọn Card và bộ lọc -->
+    <Border Grid.Row="1" CornerRadius="8" Background="{DynamicResource SemiColorBackground2}" BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1" Padding="15" Margin="0,0,0,15">
+      <Grid ColumnDefinitions="*, 20, *, 20, Auto">
+        <!-- Chọn Card mạng -->
+        <StackPanel Grid.Column="0" Spacing="5">
+          <TextBlock Text="{Binding Local[iface_select]}" FontSize="11" Foreground="{DynamicResource SemiColorText2}"/>
+          <ComboBox ItemsSource="{Binding NetworkCards}" SelectedItem="{Binding SelectedCard}" HorizontalAlignment="Stretch">
+            <ComboBox.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding DisplayName}" />
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+        </StackPanel>
+
+        <!-- Bộ lọc nhóm DNS -->
+        <StackPanel Grid.Column="2" Spacing="5">
+          <TextBlock Text="Bộ lọc nhóm DNS" FontSize="11" Foreground="{DynamicResource SemiColorText2}"/>
+          <ComboBox ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}" HorizontalAlignment="Stretch" />
+        </StackPanel>
+
+        <!-- Nút khôi phục DHCP DNS -->
+        <Button Grid.Column="4" Command="{Binding RestoreDefaultDnsCommand}" VerticalAlignment="Bottom" Classes="Warning" IsEnabled="{Binding !IsBusy}">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <ic:SymbolIcon Symbol="ArrowClockwise" FontSize="14" VerticalAlignment="Center"/>
+            <TextBlock Text="DNS tự động" VerticalAlignment="Center"/>
+          </StackPanel>
+        </Button>
+      </Grid>
+    </Border>
+
+    <!-- Bảng danh sách DNS -->
+    <Border Grid.Row="2" CornerRadius="8" Background="{DynamicResource SemiColorBackground2}" BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1" Padding="1">
+      <DataGrid ItemsSource="{Binding DnsRecords}" SelectedItem="{Binding SelectedDns}" AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="All">
+        <DataGrid.Columns>
+          <DataGridTextColumn Header="Tên DNS / Nhà cung cấp" Binding="{Binding Name}" Width="2*" />
+          <DataGridTextColumn Header="DNS Server chính" Binding="{Binding Primary}" Width="1.5*" />
+          <DataGridTextColumn Header="DNS Server phụ" Binding="{Binding Secondary}" Width="1.5*" />
+          <DataGridTextColumn Header="Nhóm danh mục" Binding="{Binding Section}" Width="1.2*" />
+          <DataGridTemplateColumn Header="Trạng thái" Width="1*">
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding ActiveText}" VerticalAlignment="Center" HorizontalAlignment="Center" FontWeight="SemiBold" 
+                           Foreground="{Binding ActiveColor}" Margin="10,0,0,0"/>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+        </DataGrid.Columns>
+      </DataGrid>
+    </Border>
+
+    <!-- Hàng dưới cùng: Nút áp dụng và thông báo trạng thái -->
+    <Grid Grid.Row="3" ColumnDefinitions="Auto, *" Margin="0,15,0,0">
+      <Button Grid.Column="0" Command="{Binding ApplyDnsCommand}" Classes="Primary" IsEnabled="{Binding !IsBusy}" Width="150" Height="40">
+        <StackPanel Orientation="Horizontal" Spacing="8">
+          <ic:SymbolIcon Symbol="Checkmark" FontSize="14" VerticalAlignment="Center"/>
+          <TextBlock Text="Áp dụng DNS" VerticalAlignment="Center"/>
+        </StackPanel>
+      </Button>
+
+      <!-- Thông báo -->
+      <Border Grid.Column="1" Margin="15,0,0,0" CornerRadius="6" IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" 
+              Background="{Binding StatusBackground}" 
+              BorderBrush="{Binding StatusBorder}" 
+              BorderThickness="1" Padding="10">
+        <Grid ColumnDefinitions="Auto, *">
+          <TextBlock Grid.Column="0" Text="{Binding StatusIcon}" Foreground="{Binding StatusIconColor}" Margin="0,0,8,0" VerticalAlignment="Center"/>
+          <TextBlock Grid.Column="1" Text="{Binding StatusMessage}" VerticalAlignment="Center"/>
+        </Grid>
+      </Border>
+    </Grid>
+  </Grid>
+</UserControl>

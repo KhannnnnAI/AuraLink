@@ -1,0 +1,468 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:ui_avalonia.ViewModels"
+             xmlns:services="using:ui_avalonia.Services"
+             xmlns:ic="using:FluentIcons.Avalonia"
+             xmlns:i="https://github.com/projektanker/icons.avalonia"
+             xmlns:iconPacks="clr-namespace:IconPacks.Avalonia.SimpleIcons;assembly=IconPacks.Avalonia.SimpleIcons"
+             mc:Ignorable="d" d:DesignWidth="980" d:DesignHeight="720"
+             x:Class="ui_avalonia.Views.DnsBenchmarkView"
+             x:DataType="vm:DnsBenchmarkViewModel">
+
+  <UserControl.Styles>
+    <Style Selector="iconPacks|PackIconSimpleIcons">
+      <Setter Property="Template">
+        <ControlTemplate>
+          <Border Background="{TemplateBinding Background}">
+            <Path Data="{TemplateBinding Data}"
+                  Fill="{TemplateBinding Foreground}"
+                  Stretch="Uniform" />
+          </Border>
+        </ControlTemplate>
+      </Setter>
+    </Style>
+  </UserControl.Styles>
+
+  <Grid RowDefinitions="Auto, *">
+    <!-- Tiêu đề (cố định phía trên) -->
+    <StackPanel Grid.Row="0" Spacing="6" Margin="24,24,24,12">
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <ic:SymbolIcon Symbol="ArrowTrending" FontSize="24" Foreground="{DynamicResource SemiColorPrimary}" VerticalAlignment="Center"/>
+        <TextBlock Text="Trình Đo &amp; Tối Ưu Tốc Độ DNS" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource SemiColorPrimary}" VerticalAlignment="Center"/>
+      </StackPanel>
+      <TextBlock FontSize="13" Foreground="{DynamicResource SemiColorText2}"
+                 Text="Chọn trang web để test → đo với 10 DNS phổ biến → xếp hạng và áp dụng ngay."/>
+    </StackPanel>
+
+    <!-- Nội dung cuộn -->
+    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="24,0,24,24">
+      <StackPanel Spacing="20">
+
+      <!-- ══ 1. Bảng lựa chọn Website kiểm tra ════════════════════════════════ -->
+      <Border CornerRadius="8"
+              Background="{DynamicResource SemiColorBackground2}"
+              BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1"
+              Padding="20,18">
+        <StackPanel Spacing="12">
+          <Grid ColumnDefinitions="*, Auto" VerticalAlignment="Center">
+            <TextBlock Grid.Column="0" Text="1  Chọn trang web để kiểm tra" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource SemiColorPrimary}" VerticalAlignment="Center"/>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+              <Button Content="Web thông thường" 
+                      Classes.Primary="{Binding IsGroup1Selected}"
+                      Classes.Tertiary="{Binding !IsGroup1Selected}"
+                      Padding="10,6" FontSize="12" FontWeight="SemiBold"
+                      Command="{Binding ChangeGroupCommand}" CommandParameter="1"/>
+              <Button Content="AI Cloud" 
+                      Classes.Primary="{Binding IsGroup2Selected}"
+                      Classes.Tertiary="{Binding !IsGroup2Selected}"
+                      Padding="10,6" FontSize="12" FontWeight="SemiBold"
+                      Command="{Binding ChangeGroupCommand}" CommandParameter="2"/>
+              <Button Content="Cloud Services" 
+                      Classes.Primary="{Binding IsGroup3Selected}"
+                      Classes.Tertiary="{Binding !IsGroup3Selected}"
+                      Padding="10,6" FontSize="12" FontWeight="SemiBold"
+                      Command="{Binding ChangeGroupCommand}" CommandParameter="3"/>
+            </StackPanel>
+          </Grid>
+          
+          <ItemsControl ItemsSource="{Binding AvailableDomains}" HorizontalAlignment="Stretch">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <UniformGrid Columns="5" Rows="2"/>
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="vm:DomainItem">
+                <Border Margin="4" CornerRadius="6" ClipToBounds="True">
+                  <Button Padding="12,10"
+                          HorizontalAlignment="Stretch"
+                          VerticalAlignment="Stretch"
+                          HorizontalContentAlignment="Left"
+                          Classes.Primary="{Binding IsSelected}"
+                          Classes.Tertiary="{Binding !IsSelected}"
+                          Command="{Binding $parent[UserControl].((vm:DnsBenchmarkViewModel)DataContext).SelectDomainCommand}"
+                          CommandParameter="{Binding}">
+                    <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="Auto, *" VerticalAlignment="Center">
+                      <!-- Logo vector -->
+                      <Panel Grid.RowSpan="2" Grid.Column="0" Margin="0,0,12,0" Width="26" Height="26" VerticalAlignment="Center">
+                        <!-- SimpleIcons -->
+                        <iconPacks:PackIconSimpleIcons 
+                                   Kind="{Binding SimpleIconKind}" 
+                                   Width="26" Height="26" 
+                                   Foreground="{Binding LogoColorToShow}"
+                                   VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   IsVisible="{Binding IsSimpleIcon}"/>
+                        <!-- FontAwesome -->
+                        <i:Icon Value="{Binding LogoIconKey}" 
+                                Width="26" Height="26" 
+                                Foreground="{Binding LogoColorToShow}"
+                                VerticalAlignment="Center"
+                                HorizontalAlignment="Center"
+                                IsVisible="{Binding IsFontAwesome}"/>
+                      </Panel>
+                      <!-- Tên web -->
+                      <TextBlock Grid.Row="0" Grid.Column="1"
+                                 Text="{Binding Label}" FontSize="13.5" FontWeight="Bold"
+                                 VerticalAlignment="Center"/>
+                      <!-- Domain -->
+                      <TextBlock Grid.Row="1" Grid.Column="1"
+                                 Text="{Binding Domain}" FontSize="10" 
+                                 Foreground="{DynamicResource SemiColorText2}"
+                                 VerticalAlignment="Center"/>
+                    </Grid>
+                  </Button>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </StackPanel>
+      </Border>
+
+      <!-- ══ 2. Cài đặt Card mạng & Chạy đo ══════════════════════════════════ -->
+      <Border CornerRadius="8"
+              Background="{DynamicResource SemiColorBackground2}"
+              BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1"
+              Padding="20,16">
+        <Grid ColumnDefinitions="*, 24, Auto" RowDefinitions="Auto, 10, Auto">
+          <!-- Label: Card mạng -->
+          <TextBlock Grid.Column="0" Grid.Row="0"
+                     Text="2  Chọn card mạng để áp dụng" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource SemiColorPrimary}"/>
+
+          <!-- Label: Bắt đầu -->
+          <TextBlock Grid.Column="2" Grid.Row="0"
+                     Text="3  Chạy đo" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource SemiColorPrimary}"/>
+
+          <!-- ── ComboBox card mạng ──────────────────────────────────────── -->
+          <ComboBox Grid.Column="0" Grid.Row="2"
+                    ItemsSource="{Binding Interfaces}"
+                    SelectedItem="{Binding SelectedInterface}"
+                    VerticalAlignment="Center"
+                    HorizontalAlignment="Stretch"/>
+
+          <!-- ── Nút Start / Stop ────────────────────────────────────────── -->
+          <StackPanel Grid.Column="2" Grid.Row="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+            <Button Command="{Binding StartBenchmarkCommand}"
+                    Classes="Primary" Padding="20,11"
+                    FontSize="14" FontWeight="Bold"
+                    Width="140"
+                    HorizontalContentAlignment="Center"
+                    IsEnabled="{Binding !IsBenchmarking}">
+              <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+                <ic:SymbolIcon Symbol="Play" FontSize="14" VerticalAlignment="Center"/>
+                <TextBlock Text="Bắt đầu đo" VerticalAlignment="Center"/>
+              </StackPanel>
+            </Button>
+            <Button Command="{Binding StartBenchmarkCommand}"
+                    Classes="Danger" Padding="20,11"
+                    FontSize="14" FontWeight="Bold"
+                    Width="140"
+                    HorizontalContentAlignment="Center"
+                    IsEnabled="{Binding IsBenchmarking}">
+              <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
+                <ic:SymbolIcon Symbol="Stop" FontSize="14" VerticalAlignment="Center"/>
+                <TextBlock Text="Dừng lại" VerticalAlignment="Center"/>
+              </StackPanel>
+            </Button>
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <!-- ══ Thanh chọn hiện tại + tiến trình ══════════════════════════════ -->
+      <Border CornerRadius="8"
+              Background="{DynamicResource SemiColorBackground2}"
+              BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1"
+              Padding="18,14">
+        <StackPanel Spacing="10">
+          <!-- Domain đang/đã test -->
+          <Grid ColumnDefinitions="Auto, *, Auto">
+            <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10"
+                        VerticalAlignment="Center">
+              <TextBlock Text="🎯 Test với:" FontSize="13"
+                         Foreground="{DynamicResource SemiColorText2}"/>
+              <Border CornerRadius="6" Padding="10,5"
+                      Background="{DynamicResource SemiColorBackground1}"
+                      BorderBrush="{DynamicResource SemiColorPrimary}" BorderThickness="1"
+                      IsVisible="{Binding SelectedDomain, Converter={x:Static ObjectConverters.IsNotNull}}">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <Panel Width="18" Height="18" VerticalAlignment="Center">
+                    <!-- SimpleIcons -->
+                    <iconPacks:PackIconSimpleIcons 
+                               Kind="{Binding SelectedDomain.SimpleIconKind}" 
+                               Width="18" Height="18"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               Foreground="{Binding SelectedDomain.LogoColor}"
+                               IsVisible="{Binding SelectedDomain.IsSimpleIcon}"/>
+                    <!-- FontAwesome -->
+                    <i:Icon Value="{Binding SelectedDomain.LogoIconKey}" 
+                            Width="18" Height="18"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            Foreground="{Binding SelectedDomain.LogoColor}"
+                            IsVisible="{Binding SelectedDomain.IsFontAwesome}"/>
+                  </Panel>
+                  <StackPanel VerticalAlignment="Center" Spacing="1">
+                    <TextBlock Text="{Binding SelectedDomain.Label}"
+                               FontWeight="Bold" FontSize="14"/>
+                    <TextBlock Text="{Binding SelectedDomain.Domain}"
+                               FontSize="11" FontFamily="Consolas, Courier New"
+                               Foreground="{DynamicResource SemiColorText2}"/>
+                  </StackPanel>
+                </StackPanel>
+              </Border>
+            </StackPanel>
+
+            <TextBlock Grid.Column="2"
+                       Text="{Binding ProgressValue, StringFormat={}{0:F0}%}"
+                       FontSize="14" FontWeight="Bold"
+                       VerticalAlignment="Center"
+                       Foreground="{DynamicResource SemiColorPrimary}"
+                       IsVisible="{Binding IsBenchmarking}"/>
+          </Grid>
+
+          <!-- Status + progress bar -->
+          <TextBlock Text="{Binding StatusMessage}" FontSize="12"
+                     Foreground="{DynamicResource SemiColorText2}"/>
+          <ProgressBar Value="{Binding ProgressValue}" Minimum="0" Maximum="100"
+                       Height="8" HorizontalAlignment="Stretch"
+                       IsVisible="{Binding IsBenchmarking}"
+                       Foreground="{DynamicResource SemiColorPrimary}"/>
+        </StackPanel>
+      </Border>
+
+      <!-- ══ DNS Tốt Nhất ═══════════════════════════════════════════════════ -->
+      <Border IsVisible="{Binding HasBestDns}"
+              CornerRadius="8" Padding="20"
+              BorderThickness="2" BorderBrush="#00e676"
+              Background="#152515">
+        <Grid ColumnDefinitions="Auto, *, Auto">
+          <Border Grid.Column="0" CornerRadius="36" Width="54" Height="54"
+                  Background="#00e676" VerticalAlignment="Center" Margin="0,0,18,0">
+            <TextBlock Text="🏆" FontSize="24" HorizontalAlignment="Center"
+                       VerticalAlignment="Center"/>
+          </Border>
+
+          <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="5">
+            <TextBlock Text="DNS NHANH NHẤT" FontSize="10" FontWeight="Bold"
+                       Foreground="#00e676" LetterSpacing="2"/>
+            <TextBlock Text="{Binding BestDns.Name}" FontSize="22" FontWeight="Heavy"
+                       Foreground="White"/>
+            <StackPanel Orientation="Horizontal" Spacing="14">
+              <TextBlock Text="{Binding BestDns.PrimaryIp, StringFormat='🔵 {0}'}"
+                         FontSize="13" FontFamily="Consolas, Courier New" Foreground="#b0e0b0"/>
+              <TextBlock Text="{Binding BestDns.SecondaryIp, StringFormat='⚪ {0}'}"
+                         FontSize="13" FontFamily="Consolas, Courier New" Foreground="#90c890"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="20" Margin="0,2,0,0">
+              <TextBlock Text="{Binding BestDns.AverageMs, StringFormat='⏱ TB {0:F1} ms'}"
+                         FontSize="15" FontWeight="Bold" Foreground="#00e676"/>
+              <TextBlock Text="{Binding BestDns.MinMs, StringFormat='⬇ Min {0:F1}'}"
+                         FontSize="13" Foreground="#81c784"/>
+              <TextBlock Text="{Binding BestDns.Jitter, StringFormat='〰 Jitter {0:F1}'}"
+                         FontSize="13" Foreground="#81c784"/>
+            </StackPanel>
+          </StackPanel>
+
+          <StackPanel Grid.Column="2" Spacing="8" VerticalAlignment="Center">
+            <Button Command="{Binding ApplyBestDnsCommand}"
+                    HorizontalAlignment="Stretch" HorizontalContentAlignment="Center"
+                    Classes="Primary" Padding="14,11">
+              <StackPanel Orientation="Horizontal" Spacing="7">
+                <ic:SymbolIcon Symbol="Checkmark" FontSize="14" VerticalAlignment="Center"/>
+                <TextBlock Text="Áp dụng ngay" FontWeight="Bold" VerticalAlignment="Center"/>
+              </StackPanel>
+            </Button>
+            <TextBlock Text="{Binding SelectedInterface, StringFormat='→ {0}'}"
+                       FontSize="11" Foreground="#60a060" TextAlignment="Center"/>
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <!-- ══ Thông báo áp dụng ═════════════════════════════════════════════ -->
+      <Border IsVisible="{Binding ApplyMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+              CornerRadius="6" Padding="14,10"
+              Background="#1e1e1e"
+              BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1">
+        <TextBlock Text="{Binding ApplyMessage}" FontSize="13"
+                   Foreground="White" TextWrapping="Wrap"/>
+      </Border>
+
+      <!-- ══ Bảng kết quả xếp hạng ══════════════════════════════════════════ -->
+      <Border CornerRadius="8"
+              Background="{DynamicResource SemiColorBackground2}"
+              BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1"
+              ClipToBounds="True">
+        <StackPanel>
+
+          <!-- Header -->
+          <Border Padding="16,11" Background="{DynamicResource SemiColorBackground1}"
+                  BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="0,0,0,1">
+            <Grid ColumnDefinitions="35, *, 115, 100, 60, 50, 55, 70, 95">
+              <TextBlock Grid.Column="0" Text="#" FontSize="11" FontWeight="Bold"
+                         Foreground="{DynamicResource SemiColorText2}" TextAlignment="Center"/>
+              <TextBlock Grid.Column="1" Text="TÊN DNS" FontSize="11" FontWeight="Bold"
+                         Foreground="{DynamicResource SemiColorText2}"/>
+              <TextBlock Grid.Column="2" Text="ĐỊA CHỈ IP" FontSize="11" FontWeight="Bold"
+                         Foreground="{DynamicResource SemiColorText2}"/>
+              <TextBlock Grid.Column="3" Text="TỐC ĐỘ TƯƠNG ĐỐI" FontSize="11" FontWeight="Bold"
+                         Foreground="{DynamicResource SemiColorText2}"/>
+              <TextBlock Grid.Column="4" Text="TB (ms)" FontSize="11" FontWeight="Bold"
+                         Foreground="{DynamicResource SemiColorText2}" TextAlignment="Center"/>
+              <TextBlock Grid.Column="5" Text="MIN" FontSize="11" FontWeight="Bold"
+                         Foreground="{DynamicResource SemiColorText2}" TextAlignment="Center"/>
+              <TextBlock Grid.Column="6" Text="JITTER" FontSize="11" FontWeight="Bold"
+                         Foreground="{DynamicResource SemiColorText2}" TextAlignment="Center"/>
+              <TextBlock Grid.Column="7" Text="ĐÁNH GIÁ" FontSize="11" FontWeight="Bold"
+                         Foreground="{DynamicResource SemiColorText2}" TextAlignment="Center"/>
+              <TextBlock Grid.Column="8" Text="THAO TÁC" FontSize="11" FontWeight="Bold"
+                         Foreground="{DynamicResource SemiColorText2}" TextAlignment="Center"/>
+            </Grid>
+          </Border>
+
+          <!-- Danh sách kết quả -->
+          <ItemsControl ItemsSource="{Binding Results}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate x:DataType="services:DnsBenchmarkResult">
+                <Border Padding="16,11"
+                        BorderBrush="{DynamicResource SemiColorBorder}"
+                        BorderThickness="0,0,0,1">
+                  <Grid ColumnDefinitions="35, *, 115, 100, 60, 50, 55, 70, 95"
+                        VerticalAlignment="Center">
+
+                    <!-- Hạng -->
+                    <Border Grid.Column="0" Width="26" Height="26" CornerRadius="13"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Background="{DynamicResource SemiColorBackground1}"
+                            BorderBrush="{Binding RatingColor}" BorderThickness="1">
+                      <TextBlock FontSize="12" FontWeight="Bold"
+                                 HorizontalAlignment="Center" VerticalAlignment="Center"
+                                 Foreground="{Binding RatingColor}"
+                                 Text="{Binding Rank}"/>
+                    </Border>
+
+                    <!-- Tên + trạng thái -->
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                      <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="14"/>
+                      <TextBlock Text="{Binding Status}" FontSize="11"
+                                 Foreground="{DynamicResource SemiColorText2}"/>
+                    </StackPanel>
+
+                    <!-- IP -->
+                    <StackPanel Grid.Column="2" VerticalAlignment="Center" Spacing="2">
+                      <TextBlock Text="{Binding PrimaryIp}" FontSize="12"
+                                 FontFamily="Consolas, Courier New, monospace"/>
+                      <TextBlock Text="{Binding SecondaryIp}" FontSize="11"
+                                 FontFamily="Consolas, Courier New, monospace"
+                                 Foreground="{DynamicResource SemiColorText2}"/>
+                    </StackPanel>
+
+                    <!-- Thanh tốc độ tương đối -->
+                    <StackPanel Grid.Column="3" VerticalAlignment="Center" Spacing="4" ClipToBounds="True">
+                      <ProgressBar Value="{Binding RelativeBarValue}"
+                                   Minimum="0" Maximum="100"
+                                   Height="6" HorizontalAlignment="Stretch"
+                                   Foreground="{Binding RatingColor}"/>
+                      <TextBlock Text="{Binding RelativeBarValue, StringFormat={}{0:F0}%}"
+                                 FontSize="10" Foreground="{DynamicResource SemiColorText2}"
+                                 TextAlignment="Center"/>
+                    </StackPanel>
+
+                    <!-- TB ms -->
+                    <TextBlock Grid.Column="4" VerticalAlignment="Center"
+                               TextAlignment="Center" FontSize="16" FontWeight="Heavy"
+                               Foreground="{Binding RatingColor}"
+                               Text="{Binding AverageMs, StringFormat={}{0:F1}}"/>
+
+                    <!-- Min -->
+                    <TextBlock Grid.Column="5" VerticalAlignment="Center"
+                               TextAlignment="Center" FontSize="12"
+                               Foreground="{DynamicResource SemiColorText2}"
+                               Text="{Binding MinMs, StringFormat={}{0:F1}}"/>
+
+                    <!-- Jitter -->
+                    <TextBlock Grid.Column="6" VerticalAlignment="Center"
+                               TextAlignment="Center" FontSize="12"
+                               Foreground="{DynamicResource SemiColorText2}"
+                               Text="{Binding Jitter, StringFormat={}{0:F1}}"/>
+
+                    <!-- Rating badge -->
+                    <Border Grid.Column="7" CornerRadius="4" Padding="6,3"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            BorderBrush="{Binding RatingColor}" BorderThickness="1">
+                      <TextBlock Text="{Binding Rating}" FontSize="11" FontWeight="Bold"
+                                 Foreground="{Binding RatingColor}" TextAlignment="Center"/>
+                    </Border>
+
+                    <!-- Áp dụng -->
+                    <Button Grid.Column="8" Classes="Tertiary" FontSize="12"
+                            HorizontalAlignment="Center" VerticalAlignment="Center"
+                            Padding="8,6"
+                            IsEnabled="{Binding IsSuccess}"
+                            Command="{Binding $parent[UserControl].((vm:DnsBenchmarkViewModel)DataContext).ApplySpecificDnsCommand}"
+                            CommandParameter="{Binding}">
+                      <StackPanel Orientation="Horizontal" Spacing="4">
+                        <ic:SymbolIcon Symbol="Checkmark" FontSize="12" VerticalAlignment="Center"/>
+                        <TextBlock Text="Áp dụng" VerticalAlignment="Center"/>
+                      </StackPanel>
+                    </Button>
+                  </Grid>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+
+          <!-- Trống -->
+          <StackPanel IsVisible="{Binding !Results.Count}"
+                      HorizontalAlignment="Center" Spacing="14"
+                      Margin="0,48,0,48">
+            <TextBlock Text="📡" FontSize="52" HorizontalAlignment="Center"/>
+            <TextBlock Text="Chưa có kết quả"
+                       FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"
+                       Foreground="{DynamicResource SemiColorText2}"/>
+            <TextBlock FontSize="13" HorizontalAlignment="Center"
+                       Foreground="{DynamicResource SemiColorText2}">
+              <Run Text="Chọn trang web ở trên rồi nhấn"/>
+              <Run Text=" 🚀 Bắt đầu đo" FontWeight="Bold"/>
+            </TextBlock>
+          </StackPanel>
+
+        </StackPanel>
+      </Border>
+
+      <!-- ══ Chú giải ════════════════════════════════════════════════════════ -->
+      <Border CornerRadius="6" Padding="16,12"
+              Background="{DynamicResource SemiColorBackground2}"
+              BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1">
+        <StackPanel Spacing="8">
+          <TextBlock Text="ℹ️ Cách hoạt động &amp; Đọc kết quả" FontWeight="Bold" FontSize="13"/>
+          <TextBlock TextWrapping="Wrap" FontSize="12"
+                     Foreground="{DynamicResource SemiColorText2}"
+                     Text="Chọn 1 trang web → ứng dụng gửi UDP DNS query RFC 1035 trực tiếp tới 10 DNS server (5 lần/server, có warm-up). Kết quả hiển thị: TB = trung bình, Jitter = độ ổn định (thấp = ổn định hơn). Thanh ngang biểu thị tốc độ tương đối so với DNS nhanh nhất."/>
+          <StackPanel Orientation="Horizontal" Spacing="20" Margin="0,4,0,0">
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <Border Width="10" Height="10" CornerRadius="2" Background="#00e676" VerticalAlignment="Center"/>
+              <TextBlock Text="Xuất sắc &lt; 20ms" FontSize="11"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <Border Width="10" Height="10" CornerRadius="2" Background="#4caf50" VerticalAlignment="Center"/>
+              <TextBlock Text="Tốt 20–50ms" FontSize="11"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <Border Width="10" Height="10" CornerRadius="2" Background="#ff9800" VerticalAlignment="Center"/>
+              <TextBlock Text="Trung bình 50–100ms" FontSize="11"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Spacing="6">
+              <Border Width="10" Height="10" CornerRadius="2" Background="#ef5350" VerticalAlignment="Center"/>
+              <TextBlock Text="Kém / Lỗi ≥ 100ms" FontSize="11"/>
+            </StackPanel>
+          </StackPanel>
+        </StackPanel>
+      </Border>
+
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

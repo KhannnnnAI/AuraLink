@@ -1,0 +1,84 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:ui_avalonia.ViewModels"
+             xmlns:ic="using:FluentIcons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="550"
+             x:Class="ui_avalonia.Views.IpChangerView"
+             x:DataType="vm:IpChangerViewModel">
+
+  <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="24">
+    <StackPanel Spacing="20">
+      
+      <!-- Tiêu đề -->
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <ic:SymbolIcon Symbol="Wrench" FontSize="24" Foreground="{DynamicResource SemiColorPrimary}" VerticalAlignment="Center"/>
+        <TextBlock Text="{Binding Local[menu_change_ip]}" Theme="{StaticResource TitleTextBlock}" FontWeight="Bold" FontSize="24" VerticalAlignment="Center"/>
+      </StackPanel>
+
+      <!-- Form thiết lập IP -->
+      <Border CornerRadius="8" Background="{DynamicResource SemiColorBackground2}" BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1" Padding="20">
+        <StackPanel Spacing="15">
+          <TextBlock Text="Cấu hình IP tĩnh (Static IP)" FontWeight="Bold" FontSize="16" Foreground="{DynamicResource SemiColorPrimary}"/>
+
+          <!-- Card mạng -->
+          <StackPanel Spacing="6">
+            <TextBlock Text="{Binding Local[iface_select]}" FontSize="12" Foreground="{DynamicResource SemiColorText1}"/>
+            <Grid ColumnDefinitions="*, Auto">
+              <ComboBox Grid.Column="0" ItemsSource="{Binding NetworkCards}" SelectedItem="{Binding SelectedCard}" HorizontalAlignment="Stretch">
+                <ComboBox.ItemTemplate>
+                  <DataTemplate>
+                    <TextBlock Text="{Binding DisplayName}" />
+                  </DataTemplate>
+                </ComboBox.ItemTemplate>
+              </ComboBox>
+              <Button Grid.Column="1" Command="{Binding RefreshCardsCommand}" Margin="10,0,0,0">
+                <ic:SymbolIcon Symbol="ArrowClockwise" FontSize="16"/>
+              </Button>
+            </Grid>
+          </StackPanel>
+
+          <!-- Địa chỉ IP -->
+          <StackPanel Spacing="6">
+            <TextBlock Text="{Binding Local[ip_address]}" FontSize="12" Foreground="{DynamicResource SemiColorText1}"/>
+            <TextBox Text="{Binding IpAddress}" PlaceholderText="Ví dụ: 192.168.1.100" />
+          </StackPanel>
+
+          <!-- Subnet Mask -->
+          <StackPanel Spacing="6">
+            <TextBlock Text="{Binding Local[subnet_mask]}" FontSize="12" Foreground="{DynamicResource SemiColorText1}"/>
+            <TextBox Text="{Binding SubnetMask}" PlaceholderText="Ví dụ: 255.255.255.0" />
+          </StackPanel>
+
+          <!-- Gateway -->
+          <StackPanel Spacing="6">
+            <TextBlock Text="{Binding Local[gateway]}" FontSize="12" Foreground="{DynamicResource SemiColorText1}"/>
+            <TextBox Text="{Binding Gateway}" PlaceholderText="Ví dụ: 192.168.1.1" />
+          </StackPanel>
+
+          <!-- Nút áp dụng -->
+          <Button Command="{Binding ApplyIpCommand}" Classes="Primary" HorizontalAlignment="Left" Width="150" IsEnabled="{Binding !IsBusy}" Margin="0,10,0,0">
+            <StackPanel Orientation="Horizontal" Spacing="8">
+              <ic:SymbolIcon Symbol="Checkmark" FontSize="14" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding Local[apply]}" VerticalAlignment="Center"/>
+            </StackPanel>
+          </Button>
+
+        </StackPanel>
+      </Border>
+
+      <!-- Panel thông báo trạng thái -->
+      <Border CornerRadius="8" IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" 
+              Background="{Binding StatusBackground}" 
+              BorderBrush="{Binding StatusBorder}"
+              BorderThickness="1" Padding="15">
+        <Grid ColumnDefinitions="Auto, *">
+          <TextBlock Grid.Column="0" Text="{Binding StatusIcon}" Foreground="{Binding StatusIconColor}" Margin="0,0,10,0" FontSize="16" VerticalAlignment="Center"/>
+          <TextBlock Grid.Column="1" Text="{Binding StatusMessage}" VerticalAlignment="Center" TextWrapping="Wrap"/>
+        </Grid>
+      </Border>
+
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

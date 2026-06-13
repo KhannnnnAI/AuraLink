@@ -1,0 +1,106 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:ui_avalonia.ViewModels"
+        xmlns:services="using:ui_avalonia.Services"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ic="using:FluentIcons.Avalonia"
+        mc:Ignorable="d" d:DesignWidth="1366" d:DesignHeight="768"
+        Width="1366" Height="768"
+        MinWidth="1366" MinHeight="768"
+        WindowStartupLocation="CenterScreen"
+        x:Class="ui_avalonia.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="{Binding Local[app_title]}">
+
+  <Design.DataContext>
+    <vm:MainWindowViewModel/>
+  </Design.DataContext>
+
+  <Grid ColumnDefinitions="240, *">
+    
+    <!-- Sidebar bên trái -->
+    <Border Grid.Column="0" Background="{DynamicResource SemiColorBackground1}" BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="0,0,1,0">
+      <Grid RowDefinitions="Auto, *, Auto" Margin="16,24">
+        
+        <!-- Tiêu đề Sidebar -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="4,0,0,24">
+          <ic:SymbolIcon Symbol="Globe" FontSize="24" VerticalAlignment="Center" Foreground="{DynamicResource SemiColorPrimary}"/>
+          <TextBlock Text="MẠNG (MANG)" FontSize="18" FontWeight="Heavy" VerticalAlignment="Center" LetterSpacing="1"/>
+        </StackPanel>
+
+        <!-- Danh sách nút chuyển Tab -->
+        <StackPanel Grid.Row="1" Spacing="6">
+          <Button Command="{Binding NavigateCommand}" CommandParameter="Dashboard" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Classes.Primary="{Binding IsDashboardActive}" Classes.Tertiary="{Binding !IsDashboardActive}" Padding="12,10">
+            <StackPanel Orientation="Horizontal" Spacing="12">
+              <ic:SymbolIcon Symbol="Home" FontSize="18" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding Local[menu_dashboard]}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+            </StackPanel>
+          </Button>
+
+          <Button Command="{Binding NavigateCommand}" CommandParameter="IpChanger" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Classes.Primary="{Binding IsIpChangerActive}" Classes.Tertiary="{Binding !IsIpChangerActive}" Padding="12,10">
+            <StackPanel Orientation="Horizontal" Spacing="12">
+              <ic:SymbolIcon Symbol="Wrench" FontSize="18" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding Local[menu_change_ip]}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+            </StackPanel>
+          </Button>
+
+          <Button Command="{Binding NavigateCommand}" CommandParameter="DnsManager" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Classes.Primary="{Binding IsDnsManagerActive}" Classes.Tertiary="{Binding !IsDnsManagerActive}" Padding="12,10">
+            <StackPanel Orientation="Horizontal" Spacing="12">
+              <ic:SymbolIcon Symbol="Shield" FontSize="18" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding Local[menu_dns]}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+            </StackPanel>
+          </Button>
+
+          <Button Command="{Binding NavigateCommand}" CommandParameter="DnsBenchmark" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Classes.Primary="{Binding IsDnsBenchmarkActive}" Classes.Tertiary="{Binding !IsDnsBenchmarkActive}" Padding="12,10">
+            <StackPanel Orientation="Horizontal" Spacing="12">
+              <ic:SymbolIcon Symbol="ArrowTrending" FontSize="18" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding Local[menu_dns_benchmark]}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+            </StackPanel>
+          </Button>
+
+          <Button Command="{Binding NavigateCommand}" CommandParameter="ProfileManager" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Classes.Primary="{Binding IsProfileManagerActive}" Classes.Tertiary="{Binding !IsProfileManagerActive}" Padding="12,10">
+            <StackPanel Orientation="Horizontal" Spacing="12">
+              <ic:SymbolIcon Symbol="Folder" FontSize="18" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding Local[menu_manage_profiles]}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+            </StackPanel>
+          </Button>
+
+          <Button Command="{Binding NavigateCommand}" CommandParameter="Scheduler" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Classes.Primary="{Binding IsSchedulerActive}" Classes.Tertiary="{Binding !IsSchedulerActive}" Padding="12,10">
+            <StackPanel Orientation="Horizontal" Spacing="12">
+              <ic:SymbolIcon Symbol="Clock" FontSize="18" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding Local[menu_scheduler]}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+            </StackPanel>
+          </Button>
+
+          <Button Command="{Binding NavigateCommand}" CommandParameter="Tools" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Classes.Primary="{Binding IsToolsActive}" Classes.Tertiary="{Binding !IsToolsActive}" Padding="12,10">
+            <StackPanel Orientation="Horizontal" Spacing="12">
+              <ic:SymbolIcon Symbol="Pulse" FontSize="18" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding Local[menu_tools]}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+            </StackPanel>
+          </Button>
+
+          <Button Command="{Binding NavigateCommand}" CommandParameter="HistorySettings" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Classes.Primary="{Binding IsHistorySettingsActive}" Classes.Tertiary="{Binding !IsHistorySettingsActive}" Padding="12,10">
+            <StackPanel Orientation="Horizontal" Spacing="12">
+              <ic:SymbolIcon Symbol="Settings" FontSize="18" VerticalAlignment="Center"/>
+              <TextBlock Text="{Binding Local[menu_history]}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+            </StackPanel>
+          </Button>
+        </StackPanel>
+
+        <!-- Nút Thoát ứng dụng ở cuối Sidebar -->
+        <Button Grid.Row="2" Command="{Binding NavigateCommand}" CommandParameter="Exit" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left" Classes="Danger" Padding="12,10">
+          <StackPanel Orientation="Horizontal" Spacing="12">
+            <ic:SymbolIcon Symbol="Power" FontSize="18" VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding Local[menu_exit]}" VerticalAlignment="Center" FontWeight="SemiBold"/>
+          </StackPanel>
+        </Button>
+      </Grid>
+    </Border>
+
+    <!-- Khu vực hiển thị View tương ứng với Viewmodel được chọn -->
+    <ContentControl Grid.Column="1" Content="{Binding CurrentPage}" Background="{DynamicResource SemiColorBackground0}" Margin="0,0,0,48" />
+    
+  </Grid>
+</Window>

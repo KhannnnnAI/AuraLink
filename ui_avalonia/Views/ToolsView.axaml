@@ -1,0 +1,320 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:ui_avalonia.ViewModels"
+             xmlns:services="using:ui_avalonia.Services"
+             xmlns:controls="using:ui_avalonia.Controls"
+             xmlns:ic="using:FluentIcons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="820" d:DesignHeight="1100"
+             x:Class="ui_avalonia.Views.ToolsView"
+             x:DataType="vm:ToolsViewModel">
+
+  <Grid RowDefinitions="Auto, *">
+    <!-- Tiêu đề (cố định phía trên) -->
+    <StackPanel Grid.Row="0" Spacing="6" Margin="24,24,24,12">
+      <StackPanel Orientation="Horizontal" Spacing="10">
+        <ic:SymbolIcon Symbol="Pulse" FontSize="24" Foreground="{DynamicResource SemiColorPrimary}" VerticalAlignment="Center"/>
+        <TextBlock Text="{Binding Local[menu_tools]}" FontSize="24" FontWeight="Bold" Foreground="{DynamicResource SemiColorPrimary}" VerticalAlignment="Center"/>
+      </StackPanel>
+      <TextBlock Text="{Binding Local[speed_subtitle]}" FontSize="13"
+                 Foreground="{DynamicResource SemiColorText2}"/>
+    </StackPanel>
+
+    <!-- Nội dung cuộn -->
+    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="24,0,24,140">
+      <StackPanel Spacing="18">
+
+        <!-- ═══ Chọn Server (compact bar) ══════════════════════════════ -->
+        <Border CornerRadius="8" Background="{DynamicResource SemiColorBackground2}"
+                BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1"
+                Padding="16,12">
+          <Grid ColumnDefinitions="Auto, 12, *, 12, Auto, 8, Auto">
+            <!-- Nút tải DS -->
+            <Button Grid.Column="0" Command="{Binding LoadServersCommand}"
+                    Classes="Tertiary" IsEnabled="{Binding CanRunTest}"
+                    Padding="12,8" VerticalAlignment="Center">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <ic:SymbolIcon Symbol="ArrowClockwise" FontSize="14" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding Local[speed_load_servers]}" FontSize="12" VerticalAlignment="Center"/>
+              </StackPanel>
+            </Button>
+
+            <!-- ComboBox -->
+            <ComboBox Grid.Column="2"
+                      ItemsSource="{Binding AvailableServers}"
+                      SelectedItem="{Binding SelectedServer}"
+                      HorizontalAlignment="Stretch"
+                      VerticalAlignment="Center"
+                      IsEnabled="{Binding CanRunTest}">
+              <ComboBox.ItemTemplate>
+                <DataTemplate x:DataType="services:SpeedtestServer">
+                  <StackPanel Orientation="Horizontal" Spacing="8">
+                    <ic:SymbolIcon Symbol="Globe" FontSize="14" VerticalAlignment="Center" Margin="0,0,4,0"/>
+                    <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center" FontSize="12"/>
+                  </StackPanel>
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <!-- Trạng thái -->
+            <TextBlock Grid.Column="4" Text="{Binding ServerLoadStatus}"
+                       FontSize="11" Foreground="{DynamicResource SemiColorText2}"
+                       VerticalAlignment="Center" MaxWidth="140" TextTrimming="CharacterEllipsis"/>
+
+            <!-- Nút đo -->
+            <Button Grid.Column="6" Command="{Binding RunSpeedtestCommand}"
+                    Classes="Primary" Padding="16,9"
+                    VerticalAlignment="Center"
+                    IsEnabled="{Binding CanRunTest}">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <ic:SymbolIcon Symbol="Play" FontSize="14" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding Local[speed_run]}" FontWeight="Bold" FontSize="12" VerticalAlignment="Center"/>
+              </StackPanel>
+            </Button>
+          </Grid>
+        </Border>
+
+        <!-- ═══ Thanh tiến trình (khi đang đo) ════════════════════════ -->
+        <Border CornerRadius="6" Background="{DynamicResource SemiColorBackground2}"
+                BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1"
+                Padding="16,10" IsVisible="{Binding IsTestingSpeed}">
+          <StackPanel Spacing="8">
+            <Grid ColumnDefinitions="*, Auto">
+              <TextBlock Grid.Column="0" Text="{Binding SpeedtestProgress}"
+                         FontSize="12" Foreground="{DynamicResource SemiColorText2}"/>
+              <TextBlock Grid.Column="1"
+                         Text="{Binding SpeedtestProgressValue, StringFormat={}{0:F0}%}"
+                         FontSize="13" FontWeight="Bold"
+                         Foreground="{DynamicResource SemiColorPrimary}"/>
+            </Grid>
+            <ProgressBar Value="{Binding SpeedtestProgressValue}" Minimum="0" Maximum="100"
+                         Height="6" Foreground="{DynamicResource SemiColorPrimary}"/>
+          </StackPanel>
+        </Border>
+
+        <!-- ═══ Khu vực Gauge chính (nền động) ═════════════════════════ -->
+        <Border CornerRadius="12" Background="{DynamicResource SemiColorBackground2}"
+                BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1"
+                Padding="24,20">
+          <StackPanel Spacing="8">
+
+            <!-- ── Stats row: PING | DOWNLOAD | UPLOAD ── -->
+            <Grid ColumnDefinitions="*, Auto, *, Auto, *" Margin="0,0,0,6">
+
+              <!-- PING -->
+              <StackPanel Grid.Column="0" HorizontalAlignment="Center" Spacing="4">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="5">
+                  <ic:SymbolIcon Symbol="Pulse" FontSize="12" Foreground="{DynamicResource SemiColorText2}" VerticalAlignment="Center"/>
+                  <TextBlock Text="PING" FontSize="10" FontWeight="Bold"
+                             Foreground="{DynamicResource SemiColorText2}" VerticalAlignment="Center"/>
+                </StackPanel>
+                <TextBlock Text="{Binding PingLatency, StringFormat={}{0:F1}}"
+                           FontSize="22" FontWeight="Heavy" HorizontalAlignment="Center"
+                           Foreground="{DynamicResource SemiColorText0}"/>
+                <TextBlock Text="ms" FontSize="10" HorizontalAlignment="Center"
+                           Foreground="{DynamicResource SemiColorText2}"/>
+              </StackPanel>
+
+              <!-- Separator -->
+              <Border Grid.Column="1" Width="1" Background="{DynamicResource SemiColorBorder}"
+                      Margin="0,8" VerticalAlignment="Stretch"/>
+
+              <!-- DOWNLOAD -->
+              <StackPanel Grid.Column="2" HorizontalAlignment="Center" Spacing="4">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="5">
+                  <ic:SymbolIcon Symbol="ArrowDownload" FontSize="12" Foreground="{DynamicResource GreenAccent}" VerticalAlignment="Center"/>
+                  <TextBlock Text="DOWNLOAD" FontSize="10" FontWeight="Bold"
+                             Foreground="{DynamicResource SemiColorText2}" VerticalAlignment="Center"/>
+                </StackPanel>
+                <TextBlock Text="{Binding DownloadSpeed, StringFormat={}{0:F2}}"
+                           FontSize="22" FontWeight="Heavy" HorizontalAlignment="Center"
+                           Foreground="{DynamicResource GreenAccent}"/>
+                <TextBlock Text="Mbps" FontSize="10" HorizontalAlignment="Center"
+                           Foreground="{DynamicResource SemiColorText2}"/>
+              </StackPanel>
+
+              <!-- Separator -->
+              <Border Grid.Column="3" Width="1" Background="{DynamicResource SemiColorBorder}"
+                      Margin="0,8" VerticalAlignment="Stretch"/>
+
+              <!-- UPLOAD -->
+              <StackPanel Grid.Column="4" HorizontalAlignment="Center" Spacing="4">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="5">
+                  <ic:SymbolIcon Symbol="ArrowUpload" FontSize="12" Foreground="{DynamicResource PinkAccent}" VerticalAlignment="Center"/>
+                  <TextBlock Text="UPLOAD" FontSize="10" FontWeight="Bold"
+                             Foreground="{DynamicResource SemiColorText2}" VerticalAlignment="Center"/>
+                </StackPanel>
+                <TextBlock Text="{Binding UploadSpeed, StringFormat={}{0:F2}}"
+                           FontSize="22" FontWeight="Heavy" HorizontalAlignment="Center"
+                           Foreground="{DynamicResource PinkAccent}"/>
+                <TextBlock Text="Mbps" FontSize="10" HorizontalAlignment="Center"
+                           Foreground="{DynamicResource SemiColorText2}"/>
+              </StackPanel>
+            </Grid>
+
+            <!-- ── Gauge control ── -->
+            <controls:SpeedGaugeControl
+                Speed="{Binding GaugeDisplayValue}"
+                IsUpload="{Binding IsUploadingPhase}"
+                Width="360" Height="310"
+                HorizontalAlignment="Center"
+                Margin="0,4,0,0"/>
+
+            <!-- ── Jitter & Packet Loss (mini cards) ── -->
+            <Grid ColumnDefinitions="*, 10, *" Margin="40,4,40,0">
+              <Border Grid.Column="0" CornerRadius="6" Background="{DynamicResource SemiColorBackground1}"
+                      BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1"
+                      Padding="12,8" HorizontalAlignment="Stretch">
+                <StackPanel HorizontalAlignment="Center" Spacing="2">
+                  <TextBlock Text="JITTER" FontSize="9" FontWeight="Bold"
+                             HorizontalAlignment="Center" Foreground="{DynamicResource SemiColorText2}"/>
+                  <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="3">
+                    <TextBlock Text="{Binding Jitter, StringFormat={}{0:F2}}"
+                               FontSize="16" FontWeight="Heavy" Foreground="{DynamicResource PinkAccent}"/>
+                    <TextBlock Text="ms" FontSize="10" VerticalAlignment="Bottom"
+                               Foreground="{DynamicResource SemiColorText2}" Margin="0,0,0,1"/>
+                  </StackPanel>
+                </StackPanel>
+              </Border>
+
+              <Border Grid.Column="2" CornerRadius="6" Background="{DynamicResource SemiColorBackground1}"
+                      BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1"
+                      Padding="12,8" HorizontalAlignment="Stretch">
+                <StackPanel HorizontalAlignment="Center" Spacing="2">
+                  <TextBlock Text="PACKET LOSS" FontSize="9" FontWeight="Bold"
+                             HorizontalAlignment="Center" Foreground="{DynamicResource SemiColorText2}"/>
+                  <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="3">
+                    <TextBlock Text="{Binding PacketLoss, StringFormat={}{0:F1}}"
+                               FontSize="16" FontWeight="Heavy" Foreground="{DynamicResource SemiColorDanger}"/>
+                    <TextBlock Text="%" FontSize="10" VerticalAlignment="Bottom"
+                               Foreground="{DynamicResource SemiColorText2}" Margin="0,0,0,1"/>
+                  </StackPanel>
+                </StackPanel>
+              </Border>
+            </Grid>
+
+            <!-- ── Server + ISP info ── -->
+            <StackPanel Spacing="8" Margin="0,12,0,0">
+              <!-- Server -->
+              <StackPanel Orientation="Horizontal" Spacing="10" Margin="12,0">
+                <Border CornerRadius="16" Width="32" Height="32"
+                        Background="{DynamicResource SemiColorBackground1}"
+                        BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1"
+                        VerticalAlignment="Center">
+                  <ic:SymbolIcon Symbol="Globe" FontSize="16" Foreground="{DynamicResource SemiColorText0}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <StackPanel VerticalAlignment="Center" Spacing="1">
+                  <TextBlock Text="{Binding SpeedtestServer}"
+                             FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource SemiColorText0}"/>
+                </StackPanel>
+              </StackPanel>
+
+              <!-- ISP -->
+              <StackPanel Orientation="Horizontal" Spacing="10" Margin="12,0"
+                          IsVisible="{Binding IspName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                <Border CornerRadius="16" Width="32" Height="32"
+                        Background="{DynamicResource SemiColorBackground1}"
+                        BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1"
+                        VerticalAlignment="Center">
+                  <ic:SymbolIcon Symbol="Router" FontSize="16" Foreground="{DynamicResource SemiColorText2}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+                <TextBlock Text="{Binding IspName}"
+                           FontSize="13" Foreground="{DynamicResource SemiColorText1}" VerticalAlignment="Center"/>
+              </StackPanel>
+
+              <!-- Result URL -->
+              <Button IsVisible="{Binding ResultUrl, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                      Command="{Binding OpenResultUrlCommand}"
+                      Theme="{StaticResource ButtonSecondary}" Padding="14,10" Margin="12,12,0,0"
+                      HorizontalAlignment="Left">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <ic:SymbolIcon Symbol="Link" FontSize="16" VerticalAlignment="Center"/>
+                  <TextBlock Text="{Binding Local[speed_result_url]}"
+                             FontSize="13" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button>
+            </StackPanel>
+
+          </StackPanel>
+        </Border>
+
+        <!-- ═══ GeoIP ══════════════════════════════════════════════════ -->
+        <Border CornerRadius="8" Background="{DynamicResource SemiColorBackground2}"
+                BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1"
+                Padding="20">
+          <StackPanel Spacing="15">
+            <Grid ColumnDefinitions="*, Auto">
+              <TextBlock Grid.Column="0" Text="{Binding Local[geoip_title]}"
+                         FontWeight="Bold" FontSize="16"
+                         Foreground="{DynamicResource SemiColorPrimary}"/>
+              <Button Grid.Column="1" Command="{Binding QueryGeoIpCommand}"
+                      Classes="Primary" IsEnabled="{Binding !IsGeoIpQuerying}">
+                <StackPanel Orientation="Horizontal" Spacing="6">
+                  <ic:SymbolIcon Symbol="Location" FontSize="14" VerticalAlignment="Center"/>
+                  <TextBlock Text="{Binding Local[geoip_query]}" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button>
+            </Grid>
+
+            <ScrollViewer MaxHeight="220" VerticalScrollBarVisibility="Auto">
+              <Grid ColumnDefinitions="150, *"
+                    RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto"
+                    Margin="0,5,0,8">
+
+                <TextBlock Grid.Column="0" Grid.Row="0" Text="{Binding Local[geoip_ip]}"
+                           Foreground="{DynamicResource SemiColorText2}" Margin="0,6"/>
+                <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding PublicIp}"
+                           FontWeight="SemiBold" Margin="0,6"/>
+
+                <TextBlock Grid.Column="0" Grid.Row="1" Text="{Binding Local[geoip_country]}"
+                           Foreground="{DynamicResource SemiColorText2}" Margin="0,6"/>
+                <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Country}"
+                           FontWeight="SemiBold" Margin="0,6"/>
+
+                <TextBlock Grid.Column="0" Grid.Row="2" Text="{Binding Local[geoip_region]}"
+                           Foreground="{DynamicResource SemiColorText2}" Margin="0,6"/>
+                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding Region}"
+                           FontWeight="SemiBold" Margin="0,6"/>
+
+                <TextBlock Grid.Column="0" Grid.Row="3" Text="{Binding Local[geoip_city]}"
+                           Foreground="{DynamicResource SemiColorText2}" Margin="0,6"/>
+                <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding City}"
+                           FontWeight="SemiBold" Margin="0,6"/>
+
+                <TextBlock Grid.Column="0" Grid.Row="4" Text="{Binding Local[geoip_isp]}"
+                           Foreground="{DynamicResource SemiColorText2}" Margin="0,6"/>
+                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding Isp}"
+                           FontWeight="SemiBold" Margin="0,6"/>
+
+                <TextBlock Grid.Column="0" Grid.Row="5" Text="{Binding Local[geoip_gps]}"
+                           Foreground="{DynamicResource SemiColorText2}" Margin="0,6"/>
+                <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding Coordinates}"
+                           FontWeight="SemiBold" Margin="0,6"/>
+
+                <TextBlock Grid.Column="0" Grid.Row="6" Text="{Binding Local[geoip_tz]}"
+                           Foreground="{DynamicResource SemiColorText2}" Margin="0,6"/>
+                <TextBlock Grid.Column="1" Grid.Row="6" Text="{Binding Timezone}"
+                           FontWeight="SemiBold" Margin="0,6"/>
+
+                <TextBlock Grid.Column="0" Grid.Row="7" Text="Bản đồ"
+                           Foreground="{DynamicResource SemiColorText2}" Margin="0,6"/>
+                <Button Grid.Column="1" Grid.Row="7"
+                        IsVisible="{Binding MapsUrl, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                        Command="{Binding OpenMapsCommand}" Classes="Link" Margin="0,6">
+                  <TextBlock Text="Xem trên Google Maps"
+                             Foreground="{DynamicResource SemiColorPrimary}"/>
+                </Button>
+              </Grid>
+            </ScrollViewer>
+
+            <TextBlock Text="{Binding GeoIpStatus}" FontSize="12"
+                       Foreground="{DynamicResource SemiColorText2}"
+                       IsVisible="{Binding GeoIpStatus, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+          </StackPanel>
+        </Border>
+
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

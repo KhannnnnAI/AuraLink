@@ -1,0 +1,87 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:ui_avalonia.ViewModels"
+             xmlns:ic="using:FluentIcons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="550"
+             x:Class="ui_avalonia.Views.HistorySettingsView"
+             x:DataType="vm:HistorySettingsViewModel">
+
+  <Grid RowDefinitions="Auto, *, Auto" Margin="24">
+    <!-- Tiêu đề -->
+    <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,15">
+      <ic:SymbolIcon Symbol="Settings" FontSize="24" Foreground="{DynamicResource SemiColorPrimary}" VerticalAlignment="Center"/>
+      <TextBlock Text="{Binding Local[menu_history]}" Theme="{StaticResource TitleTextBlock}" FontWeight="Bold" FontSize="24" VerticalAlignment="Center"/>
+    </StackPanel>
+
+    <!-- Cột bên trái: Lịch sử, Cột bên phải: Cài đặt -->
+    <Grid Grid.Row="1" ColumnDefinitions="2*, 20, 1.2*">
+      
+      <!-- Cột 1: Lịch sử logs -->
+      <Border Grid.Column="0" CornerRadius="8" Background="{DynamicResource SemiColorBackground2}" BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1" Padding="20">
+        <Grid RowDefinitions="Auto, *, Auto">
+          <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Margin="0,0,0,10">
+            <TextBlock Grid.Column="0" Text="{Binding Local[history_title]}" FontWeight="Bold" FontSize="16" Foreground="{DynamicResource SemiColorPrimary}" VerticalAlignment="Center"/>
+            <Button Grid.Column="1" Command="{Binding ClearHistoryLogsCommand}" Classes="Danger">
+              <StackPanel Orientation="Horizontal" Spacing="6">
+                <ic:SymbolIcon Symbol="Delete" FontSize="14" VerticalAlignment="Center"/>
+                <TextBlock Text="{Binding Local[history_clear]}" VerticalAlignment="Center"/>
+              </StackPanel>
+            </Button>
+          </Grid>
+
+          <!-- Danh sách log -->
+          <ListBox Grid.Row="1" ItemsSource="{Binding LogEntries}" Background="{DynamicResource SemiColorBackground1}" BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1" CornerRadius="6">
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding}" FontSize="12" FontFamily="Consolas, monospace" Margin="4"/>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+
+          <!-- File path log -->
+          <StackPanel Grid.Row="2" Margin="0,10,0,0" Spacing="2">
+            <TextBlock Text="Đường dẫn tệp log:" FontSize="10" Foreground="{DynamicResource SemiColorText2}"/>
+            <TextBlock Text="{Binding LogPath}" FontSize="10" Foreground="{DynamicResource SemiColorText1}" TextWrapping="Wrap"/>
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <!-- Cột 2: Cài đặt (Ngôn ngữ & Theme) -->
+      <StackPanel Grid.Column="2" Spacing="15">
+        
+        <!-- Cài đặt ngôn ngữ -->
+        <Border CornerRadius="8" Background="{DynamicResource SemiColorBackground2}" BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1" Padding="20">
+          <StackPanel Spacing="12">
+            <TextBlock Text="{Binding Local[settings_lang]}" FontWeight="Bold" FontSize="16" Foreground="{DynamicResource SemiColorPrimary}"/>
+            
+            <RadioButton Content="Tiếng Việt" IsChecked="{Binding IsLanguageVi}" GroupName="LanguageGroup" Margin="0,5,0,0"/>
+            <RadioButton Content="English" IsChecked="{Binding IsLanguageEn}" GroupName="LanguageGroup"/>
+          </StackPanel>
+        </Border>
+
+        <!-- Cài đặt Theme -->
+        <Border CornerRadius="8" Background="{DynamicResource SemiColorBackground2}" BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1" Padding="20">
+          <StackPanel Spacing="12">
+            <TextBlock Text="{Binding Local[settings_theme]}" FontWeight="Bold" FontSize="16" Foreground="{DynamicResource SemiColorPrimary}"/>
+            
+            <RadioButton Content="{Binding Local[theme_dark]}" IsChecked="{Binding IsThemeDark}" GroupName="ThemeGroup" Margin="0,5,0,0"/>
+            <RadioButton Content="{Binding Local[theme_light]}" IsChecked="{Binding IsThemeLight}" GroupName="ThemeGroup"/>
+            <RadioButton Content="{Binding Local[theme_system]}" IsChecked="{Binding IsThemeSystem}" GroupName="ThemeGroup"/>
+          </StackPanel>
+        </Border>
+
+      </StackPanel>
+    </Grid>
+
+    <!-- Nút Refresh logs -->
+    <Button Grid.Row="2" Command="{Binding RefreshLogsCommand}" Classes="Primary" HorizontalAlignment="Left" Margin="0,15,0,0">
+      <StackPanel Orientation="Horizontal" Spacing="6">
+        <ic:SymbolIcon Symbol="ArrowClockwise" FontSize="14" VerticalAlignment="Center"/>
+        <TextBlock Text="Cập nhật lại nhật ký" VerticalAlignment="Center"/>
+      </StackPanel>
+    </Button>
+
+  </Grid>
+</UserControl>

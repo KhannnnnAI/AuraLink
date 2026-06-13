@@ -1,0 +1,175 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:ui_avalonia.ViewModels"
+             xmlns:models="using:ui_avalonia.Models"
+             xmlns:ic="using:FluentIcons.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="900" d:DesignHeight="600"
+             x:Class="ui_avalonia.Views.ProfileManagerView"
+             x:DataType="vm:ProfileManagerViewModel">
+
+  <Grid RowDefinitions="Auto, *, Auto" Margin="24">
+    
+    <!-- Tiêu đề + Nút chức năng Export/Import -->
+    <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Margin="0,0,0,15">
+      <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10">
+        <ic:SymbolIcon Symbol="Folder" FontSize="24" Foreground="{DynamicResource SemiColorPrimary}" VerticalAlignment="Center"/>
+        <TextBlock Text="{Binding Local[profile_list]}" Theme="{StaticResource TitleTextBlock}" FontWeight="Bold" FontSize="24" VerticalAlignment="Center"/>
+      </StackPanel>
+      <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10">
+        <Button Command="{Binding ImportProfilesCommand}" ToolTip.Tip="Nhập profiles từ file profiles_export.json">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <ic:SymbolIcon Symbol="ArrowDownload" FontSize="14" VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding Local[profile_import]}" VerticalAlignment="Center"/>
+          </StackPanel>
+        </Button>
+        
+        <Button Command="{Binding ExportProfilesCommand}" ToolTip.Tip="Xuất profiles ra file profiles_export.json">
+          <StackPanel Orientation="Horizontal" Spacing="6">
+            <ic:SymbolIcon Symbol="ArrowUpload" FontSize="14" VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding Local[profile_export]}" VerticalAlignment="Center"/>
+          </StackPanel>
+        </Button>
+      </StackPanel>
+    </Grid>
+
+    <!-- Khu vực nội dung chính chia 2 cột -->
+    <Grid Grid.Row="1" ColumnDefinitions="2*, 20, 1.2*">
+      
+      <!-- Cột 1: Danh sách Profile dạng Card (ScrollViewer) -->
+      <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Auto">
+        <ItemsControl ItemsSource="{Binding Profiles}">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <WrapPanel Orientation="Horizontal" ItemWidth="280" ItemHeight="230" Margin="0,0,-10,-10"/>
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate DataType="models:IPProfile">
+              <Border CornerRadius="8" Background="{DynamicResource SemiColorBackground2}" BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1" Margin="0,0,10,10" Padding="15">
+                <Grid RowDefinitions="*, Auto">
+                  <StackPanel Grid.Row="0" Spacing="6">
+                    <!-- Tên Profile -->
+                    <TextBlock Text="{Binding ProfileName}" FontWeight="Bold" FontSize="16" Foreground="{DynamicResource SemiColorPrimary}" TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Text="{Binding Interface}" FontSize="11" Foreground="{DynamicResource SemiColorText2}" TextTrimming="CharacterEllipsis"/>
+                    
+                    <Separator Height="1" Background="{DynamicResource SemiColorBorder}" Margin="0,4"/>
+                    
+                    <Grid ColumnDefinitions="50, *" Margin="0,2">
+                      <TextBlock Grid.Column="0" Text="IP:" FontSize="12" Foreground="{DynamicResource SemiColorText2}"/>
+                      <TextBlock Grid.Column="1" Text="{Binding Ip}" FontSize="12" FontWeight="SemiBold"/>
+                    </Grid>
+                    
+                    <Grid ColumnDefinitions="50, *" Margin="0,2">
+                      <TextBlock Grid.Column="0" Text="Subnet:" FontSize="12" Foreground="{DynamicResource SemiColorText2}"/>
+                      <TextBlock Grid.Column="1" Text="{Binding Subnet}" FontSize="12" FontWeight="SemiBold"/>
+                    </Grid>
+
+                    <Grid ColumnDefinitions="50, *" Margin="0,2">
+                      <TextBlock Grid.Column="0" Text="Gate:" FontSize="12" Foreground="{DynamicResource SemiColorText2}"/>
+                      <TextBlock Grid.Column="1" Text="{Binding Gateway}" FontSize="12" FontWeight="SemiBold"/>
+                    </Grid>
+                  </StackPanel>
+                  
+                  <!-- Nút thao tác -->
+                  <Grid Grid.Row="1" ColumnDefinitions="*, 8, Auto" Margin="0,10,0,0">
+                    <Button Grid.Column="0" Command="{Binding $parent[UserControl].((vm:ProfileManagerViewModel)DataContext).ApplyProfileCommand}" CommandParameter="{Binding}" Classes="Primary" HorizontalAlignment="Stretch">
+                      <StackPanel Orientation="Horizontal" Spacing="4" HorizontalAlignment="Center">
+                        <ic:SymbolIcon Symbol="Checkmark" FontSize="12" VerticalAlignment="Center"/>
+                        <TextBlock Text="Áp dụng" FontSize="11" VerticalAlignment="Center"/>
+                      </StackPanel>
+                    </Button>
+                    <Button Grid.Column="2" Command="{Binding $parent[UserControl].((vm:ProfileManagerViewModel)DataContext).DeleteProfileCommand}" CommandParameter="{Binding}" Classes="Danger" Width="32" Padding="0">
+                      <ic:SymbolIcon Symbol="Delete" FontSize="14" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Button>
+                  </Grid>
+                </Grid>
+              </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+
+      <!-- Cột 2: Form Thêm Mới Profile -->
+      <Border Grid.Column="2" CornerRadius="8" Background="{DynamicResource SemiColorBackground2}" BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1" Padding="15">
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+          <StackPanel Spacing="10">
+            <TextBlock Text="Tạo Profile Mới" FontWeight="Bold" FontSize="16" Foreground="{DynamicResource SemiColorPrimary}"/>
+
+            <StackPanel Spacing="3">
+              <TextBlock Text="{Binding Local[profile_name]}" FontSize="11" Foreground="{DynamicResource SemiColorText1}"/>
+              <TextBox Text="{Binding NewProfileName}" PlaceholderText="Ví dụ: PhongLamViec" />
+            </StackPanel>
+
+            <StackPanel Spacing="3">
+              <TextBlock Text="{Binding Local[iface_select]}" FontSize="11" Foreground="{DynamicResource SemiColorText1}"/>
+              <Grid ColumnDefinitions="*, Auto">
+                <ComboBox Grid.Column="0" ItemsSource="{Binding NetworkCards}" SelectedItem="{Binding SelectedCard}" HorizontalAlignment="Stretch">
+                  <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                      <TextBlock Text="{Binding DisplayName}" />
+                    </DataTemplate>
+                  </ComboBox.ItemTemplate>
+                </ComboBox>
+                <Button Grid.Column="1" Command="{Binding RefreshCardsCommand}" Margin="5,0,0,0">
+                  <ic:SymbolIcon Symbol="ArrowClockwise" FontSize="16"/>
+                </Button>
+              </Grid>
+            </StackPanel>
+
+            <StackPanel Spacing="3">
+              <TextBlock Text="{Binding Local[ip_address]}" FontSize="11" Foreground="{DynamicResource SemiColorText1}"/>
+              <TextBox Text="{Binding NewIp}" PlaceholderText="192.168.1.100" />
+            </StackPanel>
+
+            <StackPanel Spacing="3">
+              <TextBlock Text="{Binding Local[subnet_mask]}" FontSize="11" Foreground="{DynamicResource SemiColorText1}"/>
+              <TextBox Text="{Binding NewSubnet}" PlaceholderText="255.255.255.0" />
+            </StackPanel>
+
+            <StackPanel Spacing="3">
+              <TextBlock Text="{Binding Local[gateway]}" FontSize="11" Foreground="{DynamicResource SemiColorText1}"/>
+              <TextBox Text="{Binding NewGateway}" PlaceholderText="192.168.1.1" />
+            </StackPanel>
+
+            <StackPanel Spacing="3">
+              <TextBlock Text="{Binding Local[dns_primary]}" FontSize="11" Foreground="{DynamicResource SemiColorText1}"/>
+              <TextBox Text="{Binding NewDns1}" PlaceholderText="8.8.8.8" />
+            </StackPanel>
+
+            <StackPanel Spacing="3">
+              <TextBlock Text="{Binding Local[dns_secondary]}" FontSize="11" Foreground="{DynamicResource SemiColorText1}"/>
+              <TextBox Text="{Binding NewDns2}" PlaceholderText="8.8.4.4" />
+            </StackPanel>
+
+            <StackPanel Spacing="3">
+              <TextBlock Text="{Binding Local[profile_note]}" FontSize="11" Foreground="{DynamicResource SemiColorText1}"/>
+              <TextBox Text="{Binding NewNote}" PlaceholderText="Nhập ghi chú..." />
+            </StackPanel>
+
+            <Button Command="{Binding SaveProfileCommand}" Classes="Primary" HorizontalAlignment="Stretch" Margin="0,10,0,0">
+              <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                <ic:SymbolIcon Symbol="Save" FontSize="14" VerticalAlignment="Center"/>
+                <TextBlock Text="Lưu cấu hình" VerticalAlignment="Center"/>
+              </StackPanel>
+            </Button>
+          </StackPanel>
+        </ScrollViewer>
+      </Border>
+
+    </Grid>
+
+    <!-- Hàng dưới: Thông báo trạng thái -->
+    <Border Grid.Row="2" Margin="0,15,0,0" CornerRadius="6" IsVisible="{Binding StatusMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" 
+            Background="{Binding StatusBackground}" 
+            BorderBrush="{Binding StatusBorder}" 
+            BorderThickness="1" Padding="10">
+      <Grid ColumnDefinitions="Auto, *">
+        <TextBlock Grid.Column="0" Text="{Binding StatusIcon}" Foreground="{Binding StatusIconColor}" Margin="0,0,8,0" VerticalAlignment="Center"/>
+        <TextBlock Grid.Column="1" Text="{Binding StatusMessage}" VerticalAlignment="Center"/>
+      </Grid>
+    </Border>
+
+  </Grid>
+</UserControl>
