@@ -52,8 +52,38 @@ namespace ui_avalonia.ViewModels
         public string LogoColorToShow => IsSelected ? "#FFFFFF" : LogoColor;
     }
 
+    public class DomainGroup
+    {
+        public int Index { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string Icon { get; set; } = "Globe";
+    }
+
     public partial class DnsBenchmarkViewModel : ViewModelBase
     {
+        public ObservableCollection<DomainGroup> DomainGroups { get; } = new()
+        {
+            new DomainGroup { Index = 1, Name = "Web thông thường", Icon = "Globe" },
+            new DomainGroup { Index = 2, Name = "AI Cloud", Icon = "Pulse" },
+            new DomainGroup { Index = 3, Name = "Cloud Services", Icon = "Cloud" }
+        };
+
+        private DomainGroup? _selectedGroup;
+        public DomainGroup? SelectedGroup
+        {
+            get => _selectedGroup;
+            set
+            {
+                if (SetProperty(ref _selectedGroup, value))
+                {
+                    if (value != null)
+                    {
+                        SelectedGroupIndex = value.Index;
+                        ChangeGroup(value.Index);
+                    }
+                }
+            }
+        }
         private readonly DnsBenchmarkService _service = new();
         private CancellationTokenSource? _cts;
 
@@ -123,8 +153,8 @@ namespace ui_avalonia.ViewModels
 
         public DnsBenchmarkViewModel()
         {
-            // Load danh sách domain nhóm 1 làm mặc định
-            ChangeGroup(1);
+            // Load danh sách domain nhóm 1 làm mặc định bằng cách set group
+            SelectedGroup = DomainGroups[0];
 
             RefreshInterfaces();
         }

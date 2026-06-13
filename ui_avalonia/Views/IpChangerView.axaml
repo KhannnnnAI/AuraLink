@@ -8,14 +8,18 @@
              x:Class="ui_avalonia.Views.IpChangerView"
              x:DataType="vm:IpChangerViewModel">
 
-  <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="24">
-    <StackPanel Spacing="20">
-      
-      <!-- Tiêu đề -->
+  <Grid RowDefinitions="Auto, *" VerticalAlignment="Stretch" ClipToBounds="True">
+    <!-- Tiêu đề (cố định phía trên) -->
+    <StackPanel Grid.Row="0" Spacing="6" Margin="24,24,24,12">
       <StackPanel Orientation="Horizontal" Spacing="10">
         <ic:SymbolIcon Symbol="Wrench" FontSize="24" Foreground="{DynamicResource SemiColorPrimary}" VerticalAlignment="Center"/>
         <TextBlock Text="{Binding Local[menu_change_ip]}" Theme="{StaticResource TitleTextBlock}" FontWeight="Bold" FontSize="24" VerticalAlignment="Center"/>
       </StackPanel>
+    </StackPanel>
+
+    <!-- Nội dung cuộn -->
+    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+      <StackPanel Spacing="20" Margin="24,0,24,24">
 
       <!-- Form thiết lập IP -->
       <Border CornerRadius="8" Background="{DynamicResource SemiColorBackground2}" BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1" Padding="20">
@@ -80,5 +84,6 @@
       </Border>
 
     </StackPanel>
-  </ScrollViewer>
+    </ScrollViewer>
+  </Grid>
 </UserControl>

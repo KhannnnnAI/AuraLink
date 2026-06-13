@@ -58,7 +58,7 @@ namespace ui_avalonia.Services
                 ["menu_tools"] = "Đo tốc độ",
                 ["menu_exit"] = "Thoát",
                 
-                ["app_title"] = "Hệ thống Đổi IP & DNS Tự động",
+                ["app_title"] = "LuminaLink - Hệ thống Đổi IP & DNS Tự động",
                 ["iface_select"] = "Chọn giao tiếp mạng:",
                 ["ip_address"] = "Địa chỉ IP",
                 ["subnet_mask"] = "Subnet Mask",
@@ -137,7 +137,7 @@ namespace ui_avalonia.Services
                 ["menu_tools"] = "Speed Test",
                 ["menu_exit"] = "Exit",
 
-                ["app_title"] = "Auto IP & DNS System",
+                ["app_title"] = "LuminaLink - Auto IP & DNS System",
                 ["iface_select"] = "Select Interface:",
                 ["ip_address"] = "IP Address",
                 ["subnet_mask"] = "Subnet Mask",

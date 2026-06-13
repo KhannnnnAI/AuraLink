@@ -10,7 +10,7 @@
              x:Class="ui_avalonia.Views.ToolsView"
              x:DataType="vm:ToolsViewModel">
 
-  <Grid RowDefinitions="Auto, *">
+  <Grid RowDefinitions="Auto, *" VerticalAlignment="Stretch" ClipToBounds="True">
     <!-- Tiêu đề (cố định phía trên) -->
     <StackPanel Grid.Row="0" Spacing="6" Margin="24,24,24,12">
       <StackPanel Orientation="Horizontal" Spacing="10">
@@ -22,8 +22,8 @@
     </StackPanel>
 
     <!-- Nội dung cuộn -->
-    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="24,0,24,140">
-      <StackPanel Spacing="18">
+    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+      <StackPanel Spacing="18" Margin="24,0,24,24">
 
         <!-- ═══ Chọn Server (compact bar) ══════════════════════════════ -->
         <Border CornerRadius="8" Background="{DynamicResource SemiColorBackground2}"
@@ -257,56 +257,54 @@
               </Button>
             </Grid>
 
-            <ScrollViewer MaxHeight="220" VerticalScrollBarVisibility="Auto">
-              <Grid ColumnDefinitions="150, *"
-                    RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto"
-                    Margin="0,5,0,8">
+            <Grid ColumnDefinitions="150, *"
+                  RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto"
+                  Margin="0,5,0,8">
 
-                <TextBlock Grid.Column="0" Grid.Row="0" Text="{Binding Local[geoip_ip]}"
-                           Foreground="{DynamicResource SemiColorText2}" Margin="0,6"/>
-                <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding PublicIp}"
-                           FontWeight="SemiBold" Margin="0,6"/>
+              <TextBlock Grid.Column="0" Grid.Row="0" Text="{Binding Local[geoip_ip]}"
+                         Foreground="{DynamicResource SemiColorText2}" Margin="0,6"/>
+              <TextBlock Grid.Column="1" Grid.Row="0" Text="{Binding PublicIp}"
+                         FontWeight="SemiBold" Margin="0,6"/>
 
-                <TextBlock Grid.Column="0" Grid.Row="1" Text="{Binding Local[geoip_country]}"
-                           Foreground="{DynamicResource SemiColorText2}" Margin="0,6"/>
-                <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Country}"
-                           FontWeight="SemiBold" Margin="0,6"/>
+              <TextBlock Grid.Column="0" Grid.Row="1" Text="{Binding Local[geoip_country]}"
+                         Foreground="{DynamicResource SemiColorText2}" Margin="0,6"/>
+              <TextBlock Grid.Column="1" Grid.Row="1" Text="{Binding Country}"
+                         FontWeight="SemiBold" Margin="0,6"/>
 
-                <TextBlock Grid.Column="0" Grid.Row="2" Text="{Binding Local[geoip_region]}"
-                           Foreground="{DynamicResource SemiColorText2}" Margin="0,6"/>
-                <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding Region}"
-                           FontWeight="SemiBold" Margin="0,6"/>
+              <TextBlock Grid.Column="0" Grid.Row="2" Text="{Binding Local[geoip_region]}"
+                         Foreground="{DynamicResource SemiColorText2}" Margin="0,6"/>
+              <TextBlock Grid.Column="1" Grid.Row="2" Text="{Binding Region}"
+                         FontWeight="SemiBold" Margin="0,6"/>
 
-                <TextBlock Grid.Column="0" Grid.Row="3" Text="{Binding Local[geoip_city]}"
-                           Foreground="{DynamicResource SemiColorText2}" Margin="0,6"/>
-                <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding City}"
-                           FontWeight="SemiBold" Margin="0,6"/>
+              <TextBlock Grid.Column="0" Grid.Row="3" Text="{Binding Local[geoip_city]}"
+                         Foreground="{DynamicResource SemiColorText2}" Margin="0,6"/>
+              <TextBlock Grid.Column="1" Grid.Row="3" Text="{Binding City}"
+                         FontWeight="SemiBold" Margin="0,6"/>
 
-                <TextBlock Grid.Column="0" Grid.Row="4" Text="{Binding Local[geoip_isp]}"
-                           Foreground="{DynamicResource SemiColorText2}" Margin="0,6"/>
-                <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding Isp}"
-                           FontWeight="SemiBold" Margin="0,6"/>
+              <TextBlock Grid.Column="0" Grid.Row="4" Text="{Binding Local[geoip_isp]}"
+                         Foreground="{DynamicResource SemiColorText2}" Margin="0,6"/>
+              <TextBlock Grid.Column="1" Grid.Row="4" Text="{Binding Isp}"
+                         FontWeight="SemiBold" Margin="0,6"/>
 
-                <TextBlock Grid.Column="0" Grid.Row="5" Text="{Binding Local[geoip_gps]}"
-                           Foreground="{DynamicResource SemiColorText2}" Margin="0,6"/>
-                <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding Coordinates}"
-                           FontWeight="SemiBold" Margin="0,6"/>
+              <TextBlock Grid.Column="0" Grid.Row="5" Text="{Binding Local[geoip_gps]}"
+                         Foreground="{DynamicResource SemiColorText2}" Margin="0,6"/>
+              <TextBlock Grid.Column="1" Grid.Row="5" Text="{Binding Coordinates}"
+                         FontWeight="SemiBold" Margin="0,6"/>
 
-                <TextBlock Grid.Column="0" Grid.Row="6" Text="{Binding Local[geoip_tz]}"
-                           Foreground="{DynamicResource SemiColorText2}" Margin="0,6"/>
-                <TextBlock Grid.Column="1" Grid.Row="6" Text="{Binding Timezone}"
-                           FontWeight="SemiBold" Margin="0,6"/>
+              <TextBlock Grid.Column="0" Grid.Row="6" Text="{Binding Local[geoip_tz]}"
+                         Foreground="{DynamicResource SemiColorText2}" Margin="0,6"/>
+              <TextBlock Grid.Column="1" Grid.Row="6" Text="{Binding Timezone}"
+                         FontWeight="SemiBold" Margin="0,6"/>
 
-                <TextBlock Grid.Column="0" Grid.Row="7" Text="Bản đồ"
-                           Foreground="{DynamicResource SemiColorText2}" Margin="0,6"/>
-                <Button Grid.Column="1" Grid.Row="7"
-                        IsVisible="{Binding MapsUrl, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
-                        Command="{Binding OpenMapsCommand}" Classes="Link" Margin="0,6">
-                  <TextBlock Text="Xem trên Google Maps"
-                             Foreground="{DynamicResource SemiColorPrimary}"/>
-                </Button>
-              </Grid>
-            </ScrollViewer>
+              <TextBlock Grid.Column="0" Grid.Row="7" Text="Bản đồ"
+                         Foreground="{DynamicResource SemiColorText2}" Margin="0,6"/>
+              <Button Grid.Column="1" Grid.Row="7"
+                       IsVisible="{Binding MapsUrl, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                       Command="{Binding OpenMapsCommand}" Classes="Link" Margin="0,6">
+                <TextBlock Text="Xem trên Google Maps"
+                           Foreground="{DynamicResource SemiColorPrimary}"/>
+              </Button>
+            </Grid>
 
             <TextBlock Text="{Binding GeoIpStatus}" FontSize="12"
                        Foreground="{DynamicResource SemiColorText2}"

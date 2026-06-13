@@ -25,7 +25,7 @@
     </Style>
   </UserControl.Styles>
 
-  <Grid RowDefinitions="Auto, *">
+  <Grid RowDefinitions="Auto, *" VerticalAlignment="Stretch" ClipToBounds="True">
     <!-- Tiêu đề (cố định phía trên) -->
     <StackPanel Grid.Row="0" Spacing="6" Margin="24,24,24,12">
       <StackPanel Orientation="Horizontal" Spacing="10">
@@ -37,136 +37,109 @@
     </StackPanel>
 
     <!-- Nội dung cuộn -->
-    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Padding="24,0,24,24">
-      <StackPanel Spacing="20">
+    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+      <StackPanel Spacing="20" Margin="24,0,24,24">
 
-      <!-- ══ 1. Bảng lựa chọn Website kiểm tra ════════════════════════════════ -->
-      <Border CornerRadius="8"
-              Background="{DynamicResource SemiColorBackground2}"
-              BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1"
-              Padding="20,18">
-        <StackPanel Spacing="12">
-          <Grid ColumnDefinitions="*, Auto" VerticalAlignment="Center">
-            <TextBlock Grid.Column="0" Text="1  Chọn trang web để kiểm tra" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource SemiColorPrimary}" VerticalAlignment="Center"/>
-            <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
-              <Button Content="Web thông thường" 
-                      Classes.Primary="{Binding IsGroup1Selected}"
-                      Classes.Tertiary="{Binding !IsGroup1Selected}"
-                      Padding="10,6" FontSize="12" FontWeight="SemiBold"
-                      Command="{Binding ChangeGroupCommand}" CommandParameter="1"/>
-              <Button Content="AI Cloud" 
-                      Classes.Primary="{Binding IsGroup2Selected}"
-                      Classes.Tertiary="{Binding !IsGroup2Selected}"
-                      Padding="10,6" FontSize="12" FontWeight="SemiBold"
-                      Command="{Binding ChangeGroupCommand}" CommandParameter="2"/>
-              <Button Content="Cloud Services" 
-                      Classes.Primary="{Binding IsGroup3Selected}"
-                      Classes.Tertiary="{Binding !IsGroup3Selected}"
-                      Padding="10,6" FontSize="12" FontWeight="SemiBold"
-                      Command="{Binding ChangeGroupCommand}" CommandParameter="3"/>
-            </StackPanel>
-          </Grid>
-          
-          <ItemsControl ItemsSource="{Binding AvailableDomains}" HorizontalAlignment="Stretch">
-            <ItemsControl.ItemsPanel>
-              <ItemsPanelTemplate>
-                <UniformGrid Columns="5" Rows="2"/>
-              </ItemsPanelTemplate>
-            </ItemsControl.ItemsPanel>
-            <ItemsControl.ItemTemplate>
-              <DataTemplate x:DataType="vm:DomainItem">
-                <Border Margin="4" CornerRadius="6" ClipToBounds="True">
-                  <Button Padding="12,10"
-                          HorizontalAlignment="Stretch"
-                          VerticalAlignment="Stretch"
-                          HorizontalContentAlignment="Left"
-                          Classes.Primary="{Binding IsSelected}"
-                          Classes.Tertiary="{Binding !IsSelected}"
-                          Command="{Binding $parent[UserControl].((vm:DnsBenchmarkViewModel)DataContext).SelectDomainCommand}"
-                          CommandParameter="{Binding}">
-                    <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="Auto, *" VerticalAlignment="Center">
-                      <!-- Logo vector -->
-                      <Panel Grid.RowSpan="2" Grid.Column="0" Margin="0,0,12,0" Width="26" Height="26" VerticalAlignment="Center">
-                        <!-- SimpleIcons -->
-                        <iconPacks:PackIconSimpleIcons 
-                                   Kind="{Binding SimpleIconKind}" 
-                                   Width="26" Height="26" 
-                                   Foreground="{Binding LogoColorToShow}"
-                                   VerticalAlignment="Center"
-                                   HorizontalAlignment="Center"
-                                   IsVisible="{Binding IsSimpleIcon}"/>
-                        <!-- FontAwesome -->
-                        <i:Icon Value="{Binding LogoIconKey}" 
-                                Width="26" Height="26" 
-                                Foreground="{Binding LogoColorToShow}"
-                                VerticalAlignment="Center"
-                                HorizontalAlignment="Center"
-                                IsVisible="{Binding IsFontAwesome}"/>
-                      </Panel>
-                      <!-- Tên web -->
-                      <TextBlock Grid.Row="0" Grid.Column="1"
-                                 Text="{Binding Label}" FontSize="13.5" FontWeight="Bold"
-                                 VerticalAlignment="Center"/>
-                      <!-- Domain -->
-                      <TextBlock Grid.Row="1" Grid.Column="1"
-                                 Text="{Binding Domain}" FontSize="10" 
-                                 Foreground="{DynamicResource SemiColorText2}"
-                                 VerticalAlignment="Center"/>
-                    </Grid>
-                  </Button>
-                </Border>
-              </DataTemplate>
-            </ItemsControl.ItemTemplate>
-          </ItemsControl>
-        </StackPanel>
-      </Border>
-
-      <!-- ══ 2. Cài đặt Card mạng & Chạy đo ══════════════════════════════════ -->
+      <!-- ══ 1. Cấu hình & Chạy đo ══════════════════════════════════ -->
       <Border CornerRadius="8"
               Background="{DynamicResource SemiColorBackground2}"
               BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1"
               Padding="20,16">
-        <Grid ColumnDefinitions="*, 24, Auto" RowDefinitions="Auto, 10, Auto">
-          <!-- Label: Card mạng -->
-          <TextBlock Grid.Column="0" Grid.Row="0"
-                     Text="2  Chọn card mạng để áp dụng" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource SemiColorPrimary}"/>
+        <Grid ColumnDefinitions="*, 16, *, 16, *, 24, Auto" RowDefinitions="Auto, 6, Auto">
+          <!-- Nhãn hàng 0 -->
+          <TextBlock Grid.Column="0" Grid.Row="0" Text="Nhóm website:" FontSize="11" Foreground="{DynamicResource SemiColorText2}"/>
+          <TextBlock Grid.Column="2" Grid.Row="0" Text="Trang cụ thể:" FontSize="11" Foreground="{DynamicResource SemiColorText2}"/>
+          <TextBlock Grid.Column="4" Grid.Row="0" Text="Card mạng:" FontSize="11" Foreground="{DynamicResource SemiColorText2}"/>
+          <TextBlock Grid.Column="6" Grid.Row="0" Text="Thao tác:" FontSize="11" Foreground="{DynamicResource SemiColorText2}"/>
 
-          <!-- Label: Bắt đầu -->
-          <TextBlock Grid.Column="2" Grid.Row="0"
-                     Text="3  Chạy đo" FontWeight="Bold" FontSize="13" Foreground="{DynamicResource SemiColorPrimary}"/>
-
-          <!-- ── ComboBox card mạng ──────────────────────────────────────── -->
+          <!-- Dropdown Nhóm website (Cột 0) -->
           <ComboBox Grid.Column="0" Grid.Row="2"
+                    ItemsSource="{Binding DomainGroups}"
+                    SelectedItem="{Binding SelectedGroup}"
+                    HorizontalAlignment="Stretch"
+                    Height="38"
+                    IsEnabled="{Binding !IsBenchmarking}">
+            <ComboBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:DomainGroup">
+                <StackPanel Orientation="Horizontal" Spacing="8">
+                  <ic:SymbolIcon Symbol="{Binding Icon}" FontSize="16" VerticalAlignment="Center" Foreground="{DynamicResource SemiColorPrimary}"/>
+                  <TextBlock Text="{Binding Name}" VerticalAlignment="Center" FontWeight="SemiBold" FontSize="12.5"/>
+                </StackPanel>
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+
+          <!-- Dropdown Trang cụ thể (Cột 2) -->
+          <ComboBox Grid.Column="2" Grid.Row="2"
+                    ItemsSource="{Binding AvailableDomains}"
+                    SelectedItem="{Binding SelectedDomain}"
+                    HorizontalAlignment="Stretch"
+                    Height="38"
+                    IsEnabled="{Binding !IsBenchmarking}">
+            <ComboBox.ItemTemplate>
+              <DataTemplate x:DataType="vm:DomainItem">
+                <Grid ColumnDefinitions="Auto, *" VerticalAlignment="Center" Margin="0,1">
+                  <!-- Logo vector -->
+                  <Panel Grid.Column="0" Margin="0,0,10,0" Width="20" Height="20" VerticalAlignment="Center">
+                    <iconPacks:PackIconSimpleIcons 
+                               Kind="{Binding SimpleIconKind}" 
+                               Width="16" Height="16" 
+                               Foreground="{Binding LogoColor}"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               IsVisible="{Binding IsSimpleIcon}"/>
+                    <i:Icon Value="{Binding LogoIconKey}" 
+                            Width="16" Height="16" 
+                            Foreground="{Binding LogoColor}"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            IsVisible="{Binding IsFontAwesome}"/>
+                  </Panel>
+                  <!-- Tên + Domain -->
+                  <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="0">
+                    <TextBlock Text="{Binding Label}" FontSize="12.5" FontWeight="Bold"/>
+                    <TextBlock Text="{Binding Domain}" FontSize="9.5" Foreground="{DynamicResource SemiColorText2}"/>
+                  </StackPanel>
+                </Grid>
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+
+          <!-- Dropdown Card mạng (Cột 4) -->
+          <ComboBox Grid.Column="4" Grid.Row="2"
                     ItemsSource="{Binding Interfaces}"
                     SelectedItem="{Binding SelectedInterface}"
                     VerticalAlignment="Center"
-                    HorizontalAlignment="Stretch"/>
+                    Height="38"
+                    HorizontalAlignment="Stretch"
+                    IsEnabled="{Binding !IsBenchmarking}"/>
 
-          <!-- ── Nút Start / Stop ────────────────────────────────────────── -->
-          <StackPanel Grid.Column="2" Grid.Row="2" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+          <!-- Nút Start / Stop (Cột 6) -->
+          <StackPanel Grid.Column="6" Grid.Row="2" Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
             <Button Command="{Binding StartBenchmarkCommand}"
-                    Classes="Primary" Padding="20,11"
-                    FontSize="14" FontWeight="Bold"
-                    Width="140"
+                    Classes="Primary" Padding="16,8"
+                    FontSize="12.5" FontWeight="Bold"
+                    Width="120" Height="38"
                     HorizontalContentAlignment="Center"
                     IsEnabled="{Binding !IsBenchmarking}">
-              <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
-                <ic:SymbolIcon Symbol="Play" FontSize="14" VerticalAlignment="Center"/>
+              <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                <ic:SymbolIcon Symbol="Play" FontSize="13" VerticalAlignment="Center"/>
                 <TextBlock Text="Bắt đầu đo" VerticalAlignment="Center"/>
               </StackPanel>
             </Button>
             <Button Command="{Binding StartBenchmarkCommand}"
-                    Classes="Danger" Padding="20,11"
-                    FontSize="14" FontWeight="Bold"
-                    Width="140"
+                    Classes="Danger" Padding="16,8"
+                    FontSize="12.5" FontWeight="Bold"
+                    Width="120" Height="38"
                     HorizontalContentAlignment="Center"
                     IsEnabled="{Binding IsBenchmarking}">
-              <StackPanel Orientation="Horizontal" Spacing="8" HorizontalAlignment="Center">
-                <ic:SymbolIcon Symbol="Stop" FontSize="14" VerticalAlignment="Center"/>
+              <StackPanel Orientation="Horizontal" Spacing="6" HorizontalAlignment="Center">
+                <ic:SymbolIcon Symbol="Stop" FontSize="13" VerticalAlignment="Center"/>
                 <TextBlock Text="Dừng lại" VerticalAlignment="Center"/>
               </StackPanel>
             </Button>
           </StackPanel>
+
         </Grid>
       </Border>
 
@@ -174,7 +147,8 @@
       <Border CornerRadius="8"
               Background="{DynamicResource SemiColorBackground2}"
               BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1"
-              Padding="18,14">
+              Padding="18,14"
+              IsVisible="{Binding IsBenchmarking}">
         <StackPanel Spacing="10">
           <!-- Domain đang/đã test -->
           <Grid ColumnDefinitions="Auto, *, Auto">
@@ -300,25 +274,25 @@
           <!-- Header -->
           <Border Padding="16,11" Background="{DynamicResource SemiColorBackground1}"
                   BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="0,0,0,1">
-            <Grid ColumnDefinitions="35, *, 115, 100, 60, 50, 55, 70, 95">
+            <Grid ColumnDefinitions="30, *, 120, 90, 60, 50, 55, 75, 90">
               <TextBlock Grid.Column="0" Text="#" FontSize="11" FontWeight="Bold"
-                         Foreground="{DynamicResource SemiColorText2}" TextAlignment="Center"/>
+                         Foreground="{DynamicResource SemiColorText2}" HorizontalAlignment="Center"/>
               <TextBlock Grid.Column="1" Text="TÊN DNS" FontSize="11" FontWeight="Bold"
-                         Foreground="{DynamicResource SemiColorText2}"/>
+                         Foreground="{DynamicResource SemiColorText2}" Margin="5,0,0,0"/>
               <TextBlock Grid.Column="2" Text="ĐỊA CHỈ IP" FontSize="11" FontWeight="Bold"
                          Foreground="{DynamicResource SemiColorText2}"/>
-              <TextBlock Grid.Column="3" Text="TỐC ĐỘ TƯƠNG ĐỐI" FontSize="11" FontWeight="Bold"
-                         Foreground="{DynamicResource SemiColorText2}"/>
+              <TextBlock Grid.Column="3" Text="TỐC ĐỘ %" FontSize="11" FontWeight="Bold"
+                         Foreground="{DynamicResource SemiColorText2}" HorizontalAlignment="Center"/>
               <TextBlock Grid.Column="4" Text="TB (ms)" FontSize="11" FontWeight="Bold"
-                         Foreground="{DynamicResource SemiColorText2}" TextAlignment="Center"/>
+                         Foreground="{DynamicResource SemiColorText2}" HorizontalAlignment="Center"/>
               <TextBlock Grid.Column="5" Text="MIN" FontSize="11" FontWeight="Bold"
-                         Foreground="{DynamicResource SemiColorText2}" TextAlignment="Center"/>
+                         Foreground="{DynamicResource SemiColorText2}" HorizontalAlignment="Center"/>
               <TextBlock Grid.Column="6" Text="JITTER" FontSize="11" FontWeight="Bold"
-                         Foreground="{DynamicResource SemiColorText2}" TextAlignment="Center"/>
+                         Foreground="{DynamicResource SemiColorText2}" HorizontalAlignment="Center"/>
               <TextBlock Grid.Column="7" Text="ĐÁNH GIÁ" FontSize="11" FontWeight="Bold"
-                         Foreground="{DynamicResource SemiColorText2}" TextAlignment="Center"/>
+                         Foreground="{DynamicResource SemiColorText2}" HorizontalAlignment="Center"/>
               <TextBlock Grid.Column="8" Text="THAO TÁC" FontSize="11" FontWeight="Bold"
-                         Foreground="{DynamicResource SemiColorText2}" TextAlignment="Center"/>
+                         Foreground="{DynamicResource SemiColorText2}" HorizontalAlignment="Center"/>
             </Grid>
           </Border>
 
@@ -329,7 +303,7 @@
                 <Border Padding="16,11"
                         BorderBrush="{DynamicResource SemiColorBorder}"
                         BorderThickness="0,0,0,1">
-                  <Grid ColumnDefinitions="35, *, 115, 100, 60, 50, 55, 70, 95"
+                  <Grid ColumnDefinitions="30, *, 120, 90, 60, 50, 55, 75, 90"
                         VerticalAlignment="Center">
 
                     <!-- Hạng -->
@@ -344,7 +318,7 @@
                     </Border>
 
                     <!-- Tên + trạng thái -->
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2">
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="2" Margin="5,0,0,0">
                       <TextBlock Text="{Binding Name}" FontWeight="Bold" FontSize="14"/>
                       <TextBlock Text="{Binding Status}" FontSize="11"
                                  Foreground="{DynamicResource SemiColorText2}"/>
@@ -372,19 +346,19 @@
 
                     <!-- TB ms -->
                     <TextBlock Grid.Column="4" VerticalAlignment="Center"
-                               TextAlignment="Center" FontSize="16" FontWeight="Heavy"
+                               HorizontalAlignment="Center" FontSize="15" FontWeight="Heavy"
                                Foreground="{Binding RatingColor}"
                                Text="{Binding AverageMs, StringFormat={}{0:F1}}"/>
 
                     <!-- Min -->
                     <TextBlock Grid.Column="5" VerticalAlignment="Center"
-                               TextAlignment="Center" FontSize="12"
+                               HorizontalAlignment="Center" FontSize="12"
                                Foreground="{DynamicResource SemiColorText2}"
                                Text="{Binding MinMs, StringFormat={}{0:F1}}"/>
 
                     <!-- Jitter -->
                     <TextBlock Grid.Column="6" VerticalAlignment="Center"
-                               TextAlignment="Center" FontSize="12"
+                               HorizontalAlignment="Center" FontSize="12"
                                Foreground="{DynamicResource SemiColorText2}"
                                Text="{Binding Jitter, StringFormat={}{0:F1}}"/>
 
@@ -432,35 +406,7 @@
         </StackPanel>
       </Border>
 
-      <!-- ══ Chú giải ════════════════════════════════════════════════════════ -->
-      <Border CornerRadius="6" Padding="16,12"
-              Background="{DynamicResource SemiColorBackground2}"
-              BorderBrush="{DynamicResource SemiColorBorder}" BorderThickness="1">
-        <StackPanel Spacing="8">
-          <TextBlock Text="ℹ️ Cách hoạt động &amp; Đọc kết quả" FontWeight="Bold" FontSize="13"/>
-          <TextBlock TextWrapping="Wrap" FontSize="12"
-                     Foreground="{DynamicResource SemiColorText2}"
-                     Text="Chọn 1 trang web → ứng dụng gửi UDP DNS query RFC 1035 trực tiếp tới 10 DNS server (5 lần/server, có warm-up). Kết quả hiển thị: TB = trung bình, Jitter = độ ổn định (thấp = ổn định hơn). Thanh ngang biểu thị tốc độ tương đối so với DNS nhanh nhất."/>
-          <StackPanel Orientation="Horizontal" Spacing="20" Margin="0,4,0,0">
-            <StackPanel Orientation="Horizontal" Spacing="6">
-              <Border Width="10" Height="10" CornerRadius="2" Background="#00e676" VerticalAlignment="Center"/>
-              <TextBlock Text="Xuất sắc &lt; 20ms" FontSize="11"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Spacing="6">
-              <Border Width="10" Height="10" CornerRadius="2" Background="#4caf50" VerticalAlignment="Center"/>
-              <TextBlock Text="Tốt 20–50ms" FontSize="11"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Spacing="6">
-              <Border Width="10" Height="10" CornerRadius="2" Background="#ff9800" VerticalAlignment="Center"/>
-              <TextBlock Text="Trung bình 50–100ms" FontSize="11"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Spacing="6">
-              <Border Width="10" Height="10" CornerRadius="2" Background="#ef5350" VerticalAlignment="Center"/>
-              <TextBlock Text="Kém / Lỗi ≥ 100ms" FontSize="11"/>
-            </StackPanel>
-          </StackPanel>
-        </StackPanel>
-      </Border>
+
 
       </StackPanel>
     </ScrollViewer>

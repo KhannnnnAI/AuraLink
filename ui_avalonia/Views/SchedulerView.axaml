@@ -8,20 +8,22 @@
              x:Class="ui_avalonia.Views.SchedulerView"
              x:DataType="vm:SchedulerViewModel">
 
-  <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="24">
-    <StackPanel Spacing="20">
-      
-      <!-- Tiêu đề + Trạng thái Scheduler -->
-      <Grid ColumnDefinitions="*, Auto" Margin="0,0,0,10">
-        <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10">
-          <ic:SymbolIcon Symbol="Clock" FontSize="24" Foreground="{DynamicResource SemiColorPrimary}" VerticalAlignment="Center"/>
-          <TextBlock Text="{Binding Local[menu_scheduler]}" Theme="{StaticResource TitleTextBlock}" FontWeight="Bold" FontSize="24" VerticalAlignment="Center"/>
-        </StackPanel>
-        <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
-          <TextBlock Text="Trạng thái chạy:" VerticalAlignment="Center"/>
-          <ToggleSwitch IsChecked="{Binding IsSchedulerRunning}" Command="{Binding ToggleSchedulerCommand}" OnContent="Đang chạy" OffContent="Đã dừng"/>
-        </StackPanel>
-      </Grid>
+  <Grid RowDefinitions="Auto, *" VerticalAlignment="Stretch" ClipToBounds="True">
+    <!-- Tiêu đề (cố định phía trên) -->
+    <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Margin="24,24,24,12">
+      <StackPanel Grid.Column="0" Orientation="Horizontal" Spacing="10">
+        <ic:SymbolIcon Symbol="Clock" FontSize="24" Foreground="{DynamicResource SemiColorPrimary}" VerticalAlignment="Center"/>
+        <TextBlock Text="{Binding Local[menu_scheduler]}" Theme="{StaticResource TitleTextBlock}" FontWeight="Bold" FontSize="24" VerticalAlignment="Center"/>
+      </StackPanel>
+      <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="10" VerticalAlignment="Center">
+        <TextBlock Text="Trạng thái chạy:" VerticalAlignment="Center"/>
+        <ToggleSwitch IsChecked="{Binding IsSchedulerRunning}" Command="{Binding ToggleSchedulerCommand}" OnContent="Đang chạy" OffContent="Đã dừng"/>
+      </StackPanel>
+    </Grid>
+
+    <!-- Nội dung cuộn -->
+    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+      <StackPanel Spacing="20" Margin="24,0,24,24">
 
       <!-- Hai cột cấu hình hẹn giờ -->
       <Grid ColumnDefinitions="*, 20, *">
@@ -113,6 +115,7 @@
         </Grid>
       </Border>
 
-    </StackPanel>
-  </ScrollViewer>
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
 </UserControl>

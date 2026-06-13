@@ -9,7 +9,7 @@
              x:Class="ui_avalonia.Views.ProfileManagerView"
              x:DataType="vm:ProfileManagerViewModel">
 
-  <Grid RowDefinitions="Auto, *, Auto" Margin="24">
+  <Grid RowDefinitions="Auto, *, Auto" Margin="24,24,24,24" ClipToBounds="True">
     
     <!-- Tiêu đề + Nút chức năng Export/Import -->
     <Grid Grid.Row="0" ColumnDefinitions="*, Auto" Margin="0,0,0,15">

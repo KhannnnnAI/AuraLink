@@ -8,7 +8,7 @@
              x:Class="ui_avalonia.Views.DnsManagerView"
              x:DataType="vm:DnsManagerViewModel">
 
-  <Grid RowDefinitions="Auto, Auto, *, Auto" Margin="24">
+  <Grid RowDefinitions="Auto, Auto, *, Auto" Margin="24,24,24,24" ClipToBounds="True">
     <!-- Tiêu đề -->
     <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="10" Margin="0,0,0,15">
       <ic:SymbolIcon Symbol="Shield" FontSize="24" Foreground="{DynamicResource SemiColorPrimary}" VerticalAlignment="Center"/>
